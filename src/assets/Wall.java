@@ -1,14 +1,15 @@
 package assets;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Wall {
-	
+public class Wall implements Serializable {
+	private static final long serialVersionUID = 7L;
 	public String[] block_path;
 	public boolean[] block_appear;
-	
+	private double y;
 	public Wall() {
-		
+		y=0;
 		block_path = new String[8];
 		block_appear = new boolean[8];
 		
@@ -23,7 +24,7 @@ public class Wall {
 		
 		for(int i=0; i<8; i++) {
 			int prob = generateRandom(1,10);
-			if(prob<=9) {
+			if(prob<=7) {
 				block_appear[i] = true;
 			}
 			else {
@@ -31,7 +32,12 @@ public class Wall {
 			}
 		}
 	}
-	
+	public double gety() {
+		return y;
+	}
+	public void sety(double a) {
+		y = a;
+	}
 	private int generateRandom(int min, int max) {
 		Random rand = new Random();
 		int randomNum = rand.nextInt((max-min)+1)+min;

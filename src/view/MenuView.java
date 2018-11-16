@@ -1,5 +1,6 @@
 package view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class MenuView {
 	
 	List<SnakeButton> menuButtons;
 	
-	public MenuView() {
+	public MenuView() throws ClassNotFoundException, IOException {
 		menuButtons = new ArrayList<>();
 		mainPane = new AnchorPane();
 		mainScene = new Scene(mainPane, width, height);
@@ -39,6 +40,7 @@ public class MenuView {
 		mainStage.initStyle(StageStyle.UNDECORATED);
 		mainStage.setTitle("Snake VS Blocks");
 		createPlayButton();
+		createLoadSaveButton() ;
 		createLeaderboardButton();
 		createExitButton();
 		createBackground();
@@ -67,7 +69,23 @@ public class MenuView {
 			}
 		});
 	}
-	
+	private void createLoadSaveButton() throws IOException,ClassNotFoundException{
+		SnakeButton playButton = new SnakeButton("Load");
+		addMenuButton(playButton);
+		
+		playButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				GameView gameManager = new GameView();
+				try {
+					gameManager.LoadSavedGame(mainStage);
+				} catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 	private void createLeaderboardButton() {
 		SnakeButton leaderboardButton = new SnakeButton("LEADERBOARD");
 		addMenuButton(leaderboardButton);
