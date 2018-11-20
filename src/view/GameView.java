@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Random;
 
 import assets.Ball;
@@ -13,6 +14,7 @@ import assets.Coin;
 import assets.Destroy_Blocks;
 import assets.Magnet;
 import assets.Shield;
+import assets.Snake;
 import assets.SnakeButton;
 import assets.Wall;
 import javafx.animation.AnimationTimer;
@@ -39,7 +41,9 @@ public class GameView {
 	private static final int game_width = 600;
 	
 	private Stage menuStage;
-	private ImageView Snake;
+	private Snake snake;
+	private ImageView snake_display;
+	private ArrayList<ImageView> snake_tail;
 	
 	private boolean leftKeyPressed;
 	private boolean rightKeyPressed;
@@ -131,6 +135,7 @@ public class GameView {
 			wall1_display[i] = new ImageView();
 			wall2_display[i] = new ImageView();
 		}
+		snake_tail = new ArrayList<ImageView>();
 		coin_display = new ImageView();
 		magnet_display = new ImageView();
 		shield_display = new ImageView();
@@ -688,7 +693,7 @@ public class GameView {
 	}
 	private void createWall1(Wall wall1, int Y) {
 		wall1 = new Wall();
-		System.out.println("vdjvbvbvxbvxblkxbklbldb");
+		//System.out.println("vdjvbvbvxbvxblkxbklbldb");
 		for(int i=0; i<8; i++) {
 			if(wall1.block_appear[i]==true) {
 				wall1_display[i] = new ImageView(wall1.block_path[i]);
@@ -739,7 +744,7 @@ public class GameView {
 				wall1_y = wall1_display[i].getLayoutY();
 			}
 		}
-		System.out.println();
+		//System.out.println();
 		for(int i=0; i<8; i++) {
 			if(wall2_display[i]!=null) {
 				wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() + 5);
@@ -747,10 +752,16 @@ public class GameView {
 			}
 		}
 		if(wall1_y >= 800) {
+			for(int i=0;i<8;i++) {
+				gamePane.getChildren().remove(wall1_display[i]);
+			}
 			createWall1(wall1, -(game_height + game_height/2));
 		}
 		
 		if(wall2_y >= 800) {
+			for(int i=0;i<8;i++) {
+				gamePane.getChildren().remove(wall2_display[i]);
+			}
 			createWall2(wall2, -(game_height + game_height/2));
 		}
 	}
@@ -807,22 +818,74 @@ public class GameView {
     }
 	
 	private void createSnake() {
-		Snake = new ImageView("resources/ball.png");
-		Snake.setLayoutX(game_width/2);
-		Snake.setLayoutY(game_height - 200);
-		gamePane.getChildren().add(Snake);
+		snake = new Snake();
+		snake_display = new ImageView("resources/ball.png");
+		snake_display.setLayoutX(game_width/2);
+		snake_display.setLayoutY(game_height - 200);
+		gamePane.getChildren().add(snake_display);
 	}
 	private void moveSnake() {
+		
 		if(leftKeyPressed && !rightKeyPressed) {
-			if(Snake.getLayoutX() > 0) {
-				Snake.setLayoutX(Snake.getLayoutX() - 10);
+			if(snake_display.getLayoutX() > 0) {
+				snake_display.setLayoutX(snake_display.getLayoutX() - 10);
+				//System.out.println(" snakedisplay x is - - " + snake_display.getLayoutX() );
+				/*for(int i=0;i<snake_tail.size();i++) {
+					snake_tail.get(i).setX(snake_display.getX());
+				}*/
 			}
 		}
 		if(!leftKeyPressed && rightKeyPressed) {
-			if(Snake.getLayoutX() < 580) {
-				Snake.setLayoutX(Snake.getLayoutX() + 10);
+			if(snake_display.getLayoutX() < 580) {
+				snake_display.setLayoutX(snake_display.getLayoutX() + 10);
+				//System.out.println(" snakedisplay x is - - " + snake_display.getLayoutX());
+				/*for(int i=0;i<snake_tail.size();i++) {
+					snake_tail.get(i).setX(snake_display.getX());
+				}*/
 			}
 		}
+		for(int i=0;i<snake_tail.size();i++) {
+			snake_tail.get(i).setLayoutX(snake_display.getLayoutX());
+			snake_tail.get(i).setLayoutY(snake_display.getLayoutY()+ (i+1)*5);
+		}
+		gamePane.getChildren().remove(snake_display);
+		for(int i=0;i<snake_tail.size();i++) {
+			gamePane.getChildren().remove(snake_tail.get(i));
+		}
+		for(int i=snake_tail.size()-1;i>=0;i--) {
+			gamePane.getChildren().add(snake_tail.get(i));
+		}
+		gamePane.getChildren().add(snake_display);
+		
+	}
+	private void setsnaketail() {
+		int x = snake.getlen();
+		if(snake_tail==null) {
+			snake_tail = new ArrayList<ImageView>();
+		}
+		if(snake_tail.size()==x) {
+			return;
+		}
+		else if(snake_tail.size() > x) {
+			while(snake_tail.size() > x) {
+				gamePane.getChildren().remove(snake_tail.get(snake_tail.size()-1));
+				snake_tail.remove(snake_tail.size()-1);
+			}
+		}
+		else if(snake_tail.size() < x) {
+			while(snake_tail.size() < x) {
+				ImageView tail = new ImageView("resources/ball.png");
+				tail.setLayoutX(snake_display.getLayoutX());
+				tail.setLayoutY(snake_display.getLayoutY()+ 5*snake_tail.size());
+				snake_tail.add(tail);
+				gamePane.getChildren().add(snake_tail.get(snake_tail.size()-1));
+				
+			}
+		}
+		/*for(int i=0;i<snake_tail.size();i++) {
+			snake_tail.get(i).setLayoutX(snake_display.getLayoutX());
+			snake_tail.get(i).setLayoutY(snake_display.getLayoutY()+ (i+1)*5);
+		}*/
 	}
 	
 	private void createGameLoop() {
@@ -832,6 +895,7 @@ public class GameView {
 				moveBackground();
 				moveWall();
 				moveSnake();
+				setsnaketail();
 				moveCoin();
 				moveMagnet();
 				moveShield();
@@ -839,6 +903,11 @@ public class GameView {
 				moveBall();
 				moveBarricade();
 				collisionHandling();
+				System.out.print(snake.getlen() + " x is - " + snake_display.getLayoutX() + " y is -" + snake_display.getLayoutY() + " hi " +snake_tail.size() + "  :::: ");
+				for(int i=0;i<snake_tail.size();i++) {
+					System.out.print(" ( " + snake_tail.get(i).getLayoutX() + " " + snake_tail.get(i).getLayoutY() + " ) " );
+				}
+				System.out.println();
 			}
 		};
 		
@@ -875,53 +944,65 @@ public class GameView {
 		
 		for(int i=0; i<wall2_display.length; i++) {
 			if(wall2_display[i]!=null) {
-				if((snake_edge + wall_edge) >= calcDist(Snake.getLayoutX()+10, Snake.getLayoutY()+10, wall2_display[i].getLayoutX()+75/2, wall2_display[i].getLayoutY()+75/2) ) {
+				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall2_display[i].getLayoutX()+75/2, wall2_display[i].getLayoutY()+75/2) ) {
 					//setPosition(wall2_display[i]);
+					wall2_display[i].setLayoutY(-1000);
 					gamePane.getChildren().remove(wall2_display[i]);
-					updatePoints(-1);
+					//System.out.println("hello");
+					updatePoints(1);
+					snake.setlen(-1);
 				}
 			}
 		}
 		
 		for(int i=0; i<wall1_display.length; i++) {
 			if(wall1_display[i]!=null) {
-				if((snake_edge + wall_edge) >= calcDist(Snake.getLayoutX()+10, Snake.getLayoutY()+10, wall1_display[i].getLayoutX()+75/2, wall1_display[i].getLayoutY()+75/2) ) {
+				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall1_display[i].getLayoutX()+75/2, wall1_display[i].getLayoutY()+75/2) ) {
 					//setPosition(wall1_display[i]);
+					wall1_display[i].setLayoutY(-900);
 					gamePane.getChildren().remove(wall1_display[i]);
-					updatePoints(-1);
+					//System.out.println("hello");
+					updatePoints(1);
+					snake.setlen(-1);
 				}
 			}
 		}
 		
 		if(coin_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(Snake.getLayoutX()+10, Snake.getLayoutY()+10, coin_display.getLayoutX()+75/2, coin_display.getLayoutY()+75/2) ) {
+			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, coin_display.getLayoutX()+75/2, coin_display.getLayoutY()+75/2) ) {
 				//setPosition(coin_display);
+				coin_display.setLayoutY(900);
 				gamePane.getChildren().remove(coin_display);
+				
+				//System.out.println("adding");
 				updatePoints(1);
 			}
 		}
 		if(magnet_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(Snake.getLayoutX()+10, Snake.getLayoutY()+10, magnet_display.getLayoutX()+75/2, magnet_display.getLayoutY()+75/2) ) {
+			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, magnet_display.getLayoutX()+75/2, magnet_display.getLayoutY()+75/2) ) {
 				//setPosition(magnet_display);
 				gamePane.getChildren().remove(magnet_display);
 			}
 		}
 		if(shield_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(Snake.getLayoutX()+10, Snake.getLayoutY()+10, shield_display.getLayoutX()+75/2, shield_display.getLayoutY()+75/2) ) {
+			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, shield_display.getLayoutX()+75/2, shield_display.getLayoutY()+75/2) ) {
 				//setPosition(shield_display);
 				gamePane.getChildren().remove(shield_display);
 			}
 		}
 		if(destroy_blocks_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(Snake.getLayoutX()+10, Snake.getLayoutY()+10, destroy_blocks_display.getLayoutX()+75/2, destroy_blocks_display.getLayoutY()+75/2) ) {
+			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, destroy_blocks_display.getLayoutX()+75/2, destroy_blocks_display.getLayoutY()+75/2) ) {
 				//setPosition(destroy_blocks_display);
 				gamePane.getChildren().remove(destroy_blocks_display);
 			}
 		}
 		if(ball_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(Snake.getLayoutX()+10, Snake.getLayoutY()+10, ball_display.getLayoutX()+75/2, ball_display.getLayoutY()+75/2) ) {
+			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, ball_display.getLayoutX()+75/2, ball_display.getLayoutY()+75/2) ) {
 				//setPosition(ball_display);
+				//get ball number;
+				ball_display.setLayoutY(900);
 				gamePane.getChildren().remove(ball_display);
+				snake.setlen(1); 
 			}
 		}
 		
