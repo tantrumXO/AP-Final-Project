@@ -68,7 +68,7 @@ public class GameView {
 	private Ball ball;
 	private ImageView ball_display;
 	private Barricade barricade;
-	private ImageView barricade_display;
+	private ImageView[] barricade_display;
 	private SnakeButton backButton;
 	private Random randomPosGen;
 	private Label points_label;
@@ -141,7 +141,7 @@ public class GameView {
 		shield_display = new ImageView();
 		destroy_blocks_display = new ImageView();
 		ball_display = new ImageView();
-		barricade_display = new ImageView();
+		barricade_display = new ImageView[10];
 		paused = false;
 		wall1 = new Wall();
 		wall2 = new Wall();
@@ -200,9 +200,9 @@ public class GameView {
 					ball.sety(ball_display.getLayoutY());
 					ball.setx(ball_display.getLayoutX());
 					
-					barricade.sety(barricade_display.getLayoutY());
-					barricade.setx(barricade_display.getLayoutX());
-					serialize_barricade(barricade);
+//					barricade.sety(barricade_display.getLayoutY());
+//					barricade.setx(barricade_display.getLayoutX());
+//					serialize_barricade(barricade);
 					
 					ball.sety(ball_display.getLayoutY());
 					ball.setx(ball_display.getLayoutX());
@@ -248,9 +248,9 @@ public class GameView {
 		ball_display.setLayoutX(ball.getx());
 		ball_display.setLayoutY(ball.gety());
 		
-		barricade = deserialize_barricade();
-		barricade_display.setLayoutX(barricade.getx());
-		barricade_display.setLayoutY(barricade.gety());
+//		barricade = deserialize_barricade();
+//		barricade_display.setLayoutX(barricade.getx());
+//		barricade_display.setLayoutY(barricade.gety());
 		
 		wall1 = deserialize_wall1();
 		for(int i=0;i<8;i++) {
@@ -273,7 +273,7 @@ public class GameView {
 		loadShield(shield);
 		loadDestroy_Blocks(destroy_blocks);
 		loadBall(ball);
-		loadBarricade(barricade);
+//		loadBarricade(barricade);
 		createGameLoop();
 		
 		backButton = new SnakeButton("QUIT");
@@ -307,10 +307,11 @@ public class GameView {
 					ball.setx(ball_display.getLayoutX());
 					serialize_ball(ball);
 					
-					
-					barricade.sety(barricade_display.getLayoutY());
-					barricade.setx(barricade_display.getLayoutX());
-					serialize_barricade(barricade);
+//					for(int i=0; i<barricade_display.length; i++) {
+//						barricade.sety(barricade_display[i].getLayoutY());
+//						barricade.setx(barricade_display[i].getLayoutX());
+//						serialize_barricade(barricade);
+//					}
 					
 					
 					wall1.sety(wall1_display[0].getLayoutY());
@@ -629,37 +630,37 @@ public class GameView {
     }
     
     private void createBarricade(Barricade barricade , int y ) {
-		barricade = new Barricade();
-		if(barricade.block_appear==true) {
-			barricade_display = new ImageView(barricade.block_path);
-			barricade_display.setLayoutY(y);
-			Random rand = new Random();
-			barricade_display.setLayoutX(60*rand.nextInt(10));
-			gamePane.getChildren().add(barricade_display);
+    	
+		for(int i=0; i<barricade_display.length; i++) {
+			barricade = new Barricade();
+			barricade_display[i] = new ImageView(barricade.block_path);
+			int x = randomPosGen.nextInt(9);
+			barricade_display[i].setLayoutX(75+75*x);
+			barricade_display[i].setLayoutY(-(225+randomPosGen.nextInt(game_height)));
+			gamePane.getChildren().add(barricade_display[i]);
 		}
 	}
-    private void loadBarricade(Barricade barricade) {
-		if(barricade.block_appear==true) {
-			barricade_display = new ImageView(barricade.block_path);
-			barricade_display.setLayoutY(barricade.gety());
-			barricade_display.setLayoutX(barricade.getx());
-			gamePane.getChildren().add(barricade_display);
-		}
-	}
+    
+//    private void loadBarricade(Barricade barricade) {
+//		if(barricade.block_appear==true) {
+//			barricade_display = new ImageView(barricade.block_path);
+//			barricade_display.setLayoutY(barricade.gety());
+//			barricade_display.setLayoutX(barricade.getx());
+//			gamePane.getChildren().add(barricade_display);
+//		}
+//	}
+    
 	private void moveBarricade() {
 		
-		double barricade_y = 0;
-	
-		if(barricade_display!=null) {
-			barricade_display.setLayoutY(barricade_display.getLayoutY() + 5);
-			//System.out.println(barricade_display.getLayoutY() + " " + barricade_display.isVisible());
-			barricade_y =barricade_display.getLayoutY();
+		for(int i=0; i<barricade_display.length; i++) {
+			barricade_display[i].setLayoutY(barricade_display[i].getLayoutY()+5);
 		}
-	
 		
-		if(barricade_y >= 800) {
-			createBarricade(barricade, -50);
-		}	
+		for(int i=0; i<barricade_display.length; i++) {
+			if(barricade_display[i].getLayoutY()>800) {
+				barricade_display[i].setLayoutY(-(225+randomPosGen.nextInt(game_height)));
+			}
+		}
 	}
 	public static void serialize_barricade(Barricade root)throws IOException{
         ObjectOutputStream out = null;
@@ -969,7 +970,7 @@ public class GameView {
 		}
 		
 		if(coin_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, coin_display.getLayoutX()+75/2, coin_display.getLayoutY()+75/2) ) {
+			if((snake_edge + coin_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, coin_display.getLayoutX()+coin_edge, coin_display.getLayoutY()+coin_edge) ) {
 				//setPosition(coin_display);
 				coin_display.setLayoutY(900);
 				gamePane.getChildren().remove(coin_display);
@@ -979,25 +980,25 @@ public class GameView {
 			}
 		}
 		if(magnet_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, magnet_display.getLayoutX()+75/2, magnet_display.getLayoutY()+75/2) ) {
+			if((snake_edge + coin_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, magnet_display.getLayoutX()+coin_edge, magnet_display.getLayoutY()+coin_edge) ) {
 				//setPosition(magnet_display);
 				gamePane.getChildren().remove(magnet_display);
 			}
 		}
 		if(shield_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, shield_display.getLayoutX()+75/2, shield_display.getLayoutY()+75/2) ) {
+			if((snake_edge + coin_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, shield_display.getLayoutX()+coin_edge, shield_display.getLayoutY()+coin_edge) ) {
 				//setPosition(shield_display);
 				gamePane.getChildren().remove(shield_display);
 			}
 		}
 		if(destroy_blocks_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, destroy_blocks_display.getLayoutX()+75/2, destroy_blocks_display.getLayoutY()+75/2) ) {
+			if((snake_edge + coin_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, destroy_blocks_display.getLayoutX()+coin_edge, destroy_blocks_display.getLayoutY()+coin_edge) ) {
 				//setPosition(destroy_blocks_display);
 				gamePane.getChildren().remove(destroy_blocks_display);
 			}
 		}
 		if(ball_display!=null) {
-			if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, ball_display.getLayoutX()+75/2, ball_display.getLayoutY()+75/2) ) {
+			if((snake_edge + coin_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, ball_display.getLayoutX()+coin_edge, ball_display.getLayoutY()+coin_edge) ) {
 				//setPosition(ball_display);
 				//get ball number;
 				ball_display.setLayoutY(900);

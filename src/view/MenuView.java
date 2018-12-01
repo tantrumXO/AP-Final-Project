@@ -52,7 +52,7 @@ public class MenuView {
 	
 	private void addMenuButton(SnakeButton button) {
 		button.setLayoutX(button_start_X);
-		button.setLayoutY(button_start_Y + menuButtons.size()*150);
+		button.setLayoutY(button_start_Y + menuButtons.size()*100);
 		menuButtons.add(button);
 		mainPane.getChildren().add(button);
 	}
@@ -70,7 +70,7 @@ public class MenuView {
 		});
 	}
 	private void createLoadSaveButton() throws IOException,ClassNotFoundException{
-		SnakeButton playButton = new SnakeButton("Load");
+		SnakeButton playButton = new SnakeButton("LOAD");
 		addMenuButton(playButton);
 		
 		playButton.setOnAction(new EventHandler<ActionEvent>() {
