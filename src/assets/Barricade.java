@@ -21,7 +21,7 @@ public class Barricade implements Serializable  {
 			block_path = new String("resources/barricade3.png");	
 		}
 		else if(xx==2) {
-			block_path = new String("resources/barricade.png");	
+			block_path = new String("resources/barricade3.png");	
 		}
 		else {
 			block_path = new String("resources/barricade2.png");	
