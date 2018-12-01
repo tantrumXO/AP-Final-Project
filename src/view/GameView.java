@@ -200,9 +200,28 @@ public class GameView {
 					ball.sety(ball_display.getLayoutY());
 					ball.setx(ball_display.getLayoutX());
 					
-//					barricade.sety(barricade_display.getLayoutY());
-//					barricade.setx(barricade_display.getLayoutX());
-//					serialize_barricade(barricade);
+					
+					barricade.setX0(barricade_display[0].getLayoutX());
+					barricade.setY0(barricade_display[0].getLayoutY());
+					barricade.setX1(barricade_display[1].getLayoutX());
+					barricade.setY1(barricade_display[1].getLayoutY());
+					barricade.setX2(barricade_display[2].getLayoutX());
+					barricade.setY2(barricade_display[2].getLayoutY());
+					barricade.setX3(barricade_display[3].getLayoutX());
+					barricade.setY3(barricade_display[3].getLayoutY());
+					barricade.setX4(barricade_display[4].getLayoutX());
+					barricade.setY4(barricade_display[4].getLayoutY());
+					barricade.setX5(barricade_display[5].getLayoutX());
+					barricade.setY5(barricade_display[5].getLayoutY());
+					barricade.setX6(barricade_display[6].getLayoutX());
+					barricade.setY6(barricade_display[6].getLayoutY());
+					barricade.setX7(barricade_display[7].getLayoutX());
+					barricade.setY7(barricade_display[7].getLayoutY());
+					barricade.setX8(barricade_display[8].getLayoutX());
+					barricade.setY8(barricade_display[8].getLayoutY());
+					barricade.setX9(barricade_display[9].getLayoutX());
+					barricade.setY9(barricade_display[9].getLayoutY());
+					serialize_barricade(barricade);
 					
 					ball.sety(ball_display.getLayoutY());
 					ball.setx(ball_display.getLayoutX());
@@ -248,9 +267,30 @@ public class GameView {
 		ball_display.setLayoutX(ball.getx());
 		ball_display.setLayoutY(ball.gety());
 		
-//		barricade = deserialize_barricade();
-//		barricade_display.setLayoutX(barricade.getx());
-//		barricade_display.setLayoutY(barricade.gety());
+		barricade = deserialize_barricade();
+		for(int i=0;i<10;i++) {
+			barricade_display[i] = new ImageView("resources/barricade3.png");
+		}
+		barricade_display[0].setLayoutX(barricade.getX0());
+		barricade_display[0].setLayoutY(barricade.getY0());
+		barricade_display[1].setLayoutX(barricade.getX1());
+		barricade_display[1].setLayoutY(barricade.getY1());
+		barricade_display[2].setLayoutX(barricade.getX2());
+		barricade_display[2].setLayoutY(barricade.getY2());
+		barricade_display[3].setLayoutX(barricade.getX3());
+		barricade_display[3].setLayoutY(barricade.getY3());
+		barricade_display[4].setLayoutX(barricade.getX4());
+		barricade_display[4].setLayoutY(barricade.getY4());
+		barricade_display[5].setLayoutX(barricade.getX5());
+		barricade_display[5].setLayoutY(barricade.getY5());
+		barricade_display[6].setLayoutX(barricade.getX6());
+		barricade_display[6].setLayoutY(barricade.getY6());
+		barricade_display[7].setLayoutX(barricade.getX7());
+		barricade_display[7].setLayoutY(barricade.getY7());
+		barricade_display[8].setLayoutX(barricade.getX8());
+		barricade_display[8].setLayoutY(barricade.getY8());
+		barricade_display[9].setLayoutX(barricade.getX9());
+		barricade_display[9].setLayoutY(barricade.getY9());
 		
 		wall1 = deserialize_wall1();
 		for(int i=0;i<8;i++) {
@@ -273,8 +313,17 @@ public class GameView {
 		loadShield(shield);
 		loadDestroy_Blocks(destroy_blocks);
 		loadBall(ball);
-//		loadBarricade(barricade);
+		createBarricade(barricade,-100);
+		loadBarricade(barricade);
 		createGameLoop();
+		
+		points_label = new Label();
+		points_label.setText(Integer.toString(points));
+		points_label.setFont(Font.font("Verdana", 30));
+		points_label.setLayoutX(game_width/2-15);
+		points_label.setLayoutY(10);
+		points_label.setTextFill(Color.web("#ffffff"));
+		gamePane.getChildren().add(points_label);
 		
 		backButton = new SnakeButton("QUIT");
 		backButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -307,11 +356,28 @@ public class GameView {
 					ball.setx(ball_display.getLayoutX());
 					serialize_ball(ball);
 					
-//					for(int i=0; i<barricade_display.length; i++) {
-//						barricade.sety(barricade_display[i].getLayoutY());
-//						barricade.setx(barricade_display[i].getLayoutX());
-//						serialize_barricade(barricade);
-//					}
+
+					barricade.setX0(barricade_display[0].getLayoutX());
+					barricade.setY0(barricade_display[0].getLayoutY());
+					barricade.setX1(barricade_display[1].getLayoutX());
+					barricade.setY1(barricade_display[1].getLayoutY());
+					barricade.setX2(barricade_display[2].getLayoutX());
+					barricade.setY2(barricade_display[2].getLayoutY());
+					barricade.setX3(barricade_display[3].getLayoutX());
+					barricade.setY3(barricade_display[3].getLayoutY());
+					barricade.setX4(barricade_display[4].getLayoutX());
+					barricade.setY4(barricade_display[4].getLayoutY());
+					barricade.setX5(barricade_display[5].getLayoutX());
+					barricade.setY5(barricade_display[5].getLayoutY());
+					barricade.setX6(barricade_display[6].getLayoutX());
+					barricade.setY6(barricade_display[6].getLayoutY());
+					barricade.setX7(barricade_display[7].getLayoutX());
+					barricade.setY7(barricade_display[7].getLayoutY());
+					barricade.setX8(barricade_display[8].getLayoutX());
+					barricade.setY8(barricade_display[8].getLayoutY());
+					barricade.setX9(barricade_display[9].getLayoutX());
+					barricade.setY9(barricade_display[9].getLayoutY());
+					serialize_barricade(barricade);
 					
 					
 					wall1.sety(wall1_display[0].getLayoutY());
@@ -510,6 +576,7 @@ public class GameView {
             return newroot;
         }
     }
+   
     
 	private void createdestroy_block(Destroy_Blocks destroy_blocks , int y ) {
 		destroy_blocks = new Destroy_Blocks();
@@ -640,16 +707,33 @@ public class GameView {
 			gamePane.getChildren().add(barricade_display[i]);
 		}
 	}
-    
-//    private void loadBarricade(Barricade barricade) {
-//		if(barricade.block_appear==true) {
-//			barricade_display = new ImageView(barricade.block_path);
-//			barricade_display.setLayoutY(barricade.gety());
-//			barricade_display.setLayoutX(barricade.getx());
-//			gamePane.getChildren().add(barricade_display);
-//		}
-//	}
-    
+    private void loadBarricade(Barricade barricade) {
+		if(barricade.block_appear==true) {
+			barricade_display[0].setLayoutX(barricade.getX0());
+			barricade_display[0].setLayoutY(barricade.getY0());
+			barricade_display[1].setLayoutX(barricade.getX1());
+			barricade_display[1].setLayoutY(barricade.getY1());
+			barricade_display[2].setLayoutX(barricade.getX2());
+			barricade_display[2].setLayoutY(barricade.getY2());
+			barricade_display[3].setLayoutX(barricade.getX3());
+			barricade_display[3].setLayoutY(barricade.getY3());
+			barricade_display[4].setLayoutX(barricade.getX4());
+			barricade_display[4].setLayoutY(barricade.getY4());
+			barricade_display[5].setLayoutX(barricade.getX5());
+			barricade_display[5].setLayoutY(barricade.getY5());
+			barricade_display[6].setLayoutX(barricade.getX6());
+			barricade_display[6].setLayoutY(barricade.getY6());
+			barricade_display[7].setLayoutX(barricade.getX7());
+			barricade_display[7].setLayoutY(barricade.getY7());
+			barricade_display[8].setLayoutX(barricade.getX8());
+			barricade_display[8].setLayoutY(barricade.getY8());
+			barricade_display[9].setLayoutX(barricade.getX9());
+			barricade_display[9].setLayoutY(barricade.getY9());
+			/*for(int i=0;i<10;i++) {
+				gamePane.getChildren().add(barricade_display[i]);
+			}*/	
+		}
+	}
 	private void moveBarricade() {
 		
 		for(int i=0; i<barricade_display.length; i++) {
@@ -694,7 +778,7 @@ public class GameView {
 	}
 	private void createWall1(Wall wall1, int Y) {
 		wall1 = new Wall();
-		//System.out.println("vdjvbvbvxbvxblkxbklbldb");
+		Y = Y +200;
 		for(int i=0; i<8; i++) {
 			if(wall1.block_appear[i]==true) {
 				wall1_display[i] = new ImageView(wall1.block_path[i]);
@@ -706,6 +790,7 @@ public class GameView {
 	}
 	private void createWall2(Wall wall2, int Y) {
 		wall2 = new Wall();
+		Y = Y+200;
 		for(int i=0; i<8; i++) {
 			if(wall2.block_appear[i]==true) {
 				wall2_display[i] = new ImageView(wall2.block_path[i]);
@@ -825,12 +910,42 @@ public class GameView {
 		snake_display.setLayoutY(game_height - 200);
 		gamePane.getChildren().add(snake_display);
 	}
-	private void moveSnake() {
+private void moveSnake() {
+		
+		ArrayList<Integer> left = new ArrayList<>();
+		ArrayList<Integer> right = new ArrayList<>();
+		
+		boolean wall_check = false;
+		for(int i=0; i<barricade_display.length; i++) {
+			if(snake_display.getLayoutY()>barricade_display[i].getLayoutY() && snake_display.getLayoutY()<barricade_display[i].getLayoutY()+225 && barricade_display[i].getLayoutX()<snake_display.getLayoutX()) {
+				wall_check = true;
+				left.add(i);
+			}
+			if(snake_display.getLayoutY()>barricade_display[i].getLayoutY() && snake_display.getLayoutY()<barricade_display[i].getLayoutY()+225 && barricade_display[i].getLayoutX()>snake_display.getLayoutX()) {
+				wall_check = true;
+				right.add(i);
+			}
+		}
 		
 		if(leftKeyPressed && !rightKeyPressed) {
 			if(snake_display.getLayoutX() > 0) {
-				snake_display.setLayoutX(snake_display.getLayoutX() - 10);
-				//System.out.println(" snakedisplay x is - - " + snake_display.getLayoutX() );
+				
+				if(wall_check) {
+					boolean close_check = false;
+					for(int i=0; i<left.size(); i++) {
+						if((snake_display.getLayoutX()) - (barricade_display[left.get(i)].getLayoutX()) < 15) {
+							close_check = true;
+							System.out.println("FUCK");
+						}
+					}
+					if(!close_check) {
+						snake_display.setLayoutX(snake_display.getLayoutX() - 10);
+					}
+				}
+				else {
+					snake_display.setLayoutX(snake_display.getLayoutX() - 10);
+				}
+				//System.out.println(" snake_display x is - - " + snake_display.getLayoutX() );
 				/*for(int i=0;i<snake_tail.size();i++) {
 					snake_tail.get(i).setX(snake_display.getX());
 				}*/
@@ -838,13 +953,29 @@ public class GameView {
 		}
 		if(!leftKeyPressed && rightKeyPressed) {
 			if(snake_display.getLayoutX() < 580) {
-				snake_display.setLayoutX(snake_display.getLayoutX() + 10);
+				
+				if(wall_check) {
+					boolean close_check = false;
+					for(int i=0; i<right.size(); i++) {
+						if((barricade_display[right.get(i)].getLayoutX()) - (snake_display.getLayoutX()) < 30) {
+							close_check = true;
+							System.out.println("FUCK");
+						}
+					}
+					if(!close_check) {
+						snake_display.setLayoutX(snake_display.getLayoutX() + 10);
+					}
+				}
+				else {
+					snake_display.setLayoutX(snake_display.getLayoutX() + 10);
+				}
 				//System.out.println(" snakedisplay x is - - " + snake_display.getLayoutX());
 				/*for(int i=0;i<snake_tail.size();i++) {
 					snake_tail.get(i).setX(snake_display.getX());
 				}*/
 			}
 		}
+		
 		for(int i=0;i<snake_tail.size();i++) {
 			snake_tail.get(i).setLayoutX(snake_display.getLayoutX());
 			snake_tail.get(i).setLayoutY(snake_display.getLayoutY()+ (i+1)*5);
@@ -858,7 +989,7 @@ public class GameView {
 		}
 		gamePane.getChildren().add(snake_display);
 		
-	}
+	}	
 	private void setsnaketail() {
 		int x = snake.getlen();
 		if(snake_tail==null) {
@@ -904,11 +1035,8 @@ public class GameView {
 				moveBall();
 				moveBarricade();
 				collisionHandling();
-				System.out.print(snake.getlen() + " x is - " + snake_display.getLayoutX() + " y is -" + snake_display.getLayoutY() + " hi " +snake_tail.size() + "  :::: ");
-				for(int i=0;i<snake_tail.size();i++) {
-					System.out.print(" ( " + snake_tail.get(i).getLayoutX() + " " + snake_tail.get(i).getLayoutY() + " ) " );
-				}
-				System.out.println();
+				//System.out.print(snake.getlen() + " x is - " + snake_display.getLayoutX() + " y is -" + snake_display.getLayoutY() + " hi " +snake_tail.size() + "  :::: ");
+				System.out.println(wall1_display[1].getLayoutY() + " hello " + wall2_display[1].getLayoutY());
 			}
 		};
 		

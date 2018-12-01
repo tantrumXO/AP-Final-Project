@@ -58,7 +58,7 @@ public class MenuView {
 	}
 	
 	private void createPlayButton() {
-		SnakeButton playButton = new SnakeButton("PLAY");
+		SnakeButton playButton = new SnakeButton("NEW GAME");
 		addMenuButton(playButton);
 		
 		playButton.setOnAction(new EventHandler<ActionEvent>() {
