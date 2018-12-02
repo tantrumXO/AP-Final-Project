@@ -997,7 +997,7 @@ public class GameView {
 					}
 					if(!close_check) {
 						snake_display.setLayoutX(snake_display.getLayoutX() + 10);
-					}
+					} 
 				}
 				else {
 					snake_display.setLayoutX(snake_display.getLayoutX() + 10);
@@ -1011,7 +1011,7 @@ public class GameView {
 		
 		for(int i=0;i<snake_tail.size();i++) {
 			snake_tail.get(i).setLayoutX(snake_display.getLayoutX());
-			snake_tail.get(i).setLayoutY(snake_display.getLayoutY()+ (i+1)*5);
+			snake_tail.get(i).setLayoutY(snake_display.getLayoutY()+ (i+1)*20);
 		}
 		gamePane.getChildren().remove(snake_display);
 		for(int i=0;i<snake_tail.size();i++) {
@@ -1041,7 +1041,7 @@ public class GameView {
 			while(snake_tail.size() < x) {
 				ImageView tail = new ImageView("resources/ball.png");
 				tail.setLayoutX(snake_display.getLayoutX());
-				tail.setLayoutY(snake_display.getLayoutY()+ 5*snake_tail.size());
+				tail.setLayoutY(snake_display.getLayoutY()+ 20*snake_tail.size());
 				snake_tail.add(tail);
 				gamePane.getChildren().add(snake_tail.get(snake_tail.size()-1));
 				
