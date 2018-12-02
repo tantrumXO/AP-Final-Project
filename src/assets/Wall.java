@@ -9,7 +9,9 @@ public class Wall implements Serializable {
 	public boolean[] block_appear;
 	private double y;
 	public int[] values;
-	
+	/**
+	 * Constructor
+	 */
 	public Wall() {
 		y=0;
 		block_path = new String[8];
@@ -41,6 +43,10 @@ public class Wall implements Serializable {
 		}
 	}
 	
+	/**
+	 * Parameterized Constructor
+	 * @param snake_length
+	 */
 	public Wall(int snake_length) {
 		y=0;
 		block_path = new String[8];
@@ -77,12 +83,26 @@ public class Wall implements Serializable {
 			}
 		}
 	}
+	/**
+	 * returns y
+	 * @return
+	 */
 	public double gety() {
 		return y;
 	}
+	/**
+	 * sets y
+	 * @param a
+	 */
 	public void sety(double a) {
 		y = a;
 	}
+	/**
+	 * generates a random value between min and max
+	 * @param min
+	 * @param max
+	 * @return
+	 */
 	private int generateRandom(int min, int max) {
 		Random rand = new Random();
 		int randomNum = rand.nextInt((max-min)+1)+min;

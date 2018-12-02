@@ -3,13 +3,16 @@ package assets;
 import java.util.Random;
 import java.io.Serializable;
 
-public class Coin implements Serializable {
+public class Coin extends Token implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	public String block_path;
 	public boolean block_appear;
 	private double x;
 	private double y;
+	/**
+	 * Constructor
+	 */
 	public Coin() {
 		x=0;
 		y=0;
@@ -24,18 +27,40 @@ public class Coin implements Serializable {
 			}
 		
 	}
+	/**
+	 * returns x
+	 * @return
+	 */
 	public double getx() {
 		return x;
 	}
+	/**
+	 * returns y
+	 * @return
+	 */
 	public double gety() {
 		return y;
 	}
+	/**
+	 * sets x
+	 * @param d
+	 */
 	public void setx(double d) {
 		x = d;
 	}
+	/**
+	 * sets y
+	 * @param a
+	 */
 	public void sety(double a) {
 		y = a;
 	}
+	/**
+	 * generates a random value between min to max
+	 * @param min
+	 * @param max
+	 * @return
+	 */
 	private int generateRandom(int min, int max) {
 		Random rand = new Random();
 		int randomNum = rand.nextInt((max-min)+1)+min;

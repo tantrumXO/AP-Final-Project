@@ -10,6 +10,9 @@ public class Player implements Serializable{
 	private String Name;
 	private int Score;
 	private LocalDateTime date;
+	/**
+	 * Constructor
+	 */
 	public Player() {
 		Name = "John";
 		Score =0;
@@ -40,7 +43,9 @@ public class Player implements Serializable{
 		Score = score;
 	}
 
-	
+	/**
+	 * The to string method
+	 */
 	public String toString() {
 		return this.Name + " " + this.Score + " " + this.date;
 	}

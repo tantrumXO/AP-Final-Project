@@ -29,7 +29,9 @@ public class Barricade implements Serializable  {
 	private double x9;
 	private double y9;
 	
-	
+	/**
+	 * Constructor
+	 */
 	public Barricade() {
 		
 		Random rand = new Random();
@@ -214,7 +216,12 @@ public class Barricade implements Serializable  {
 	public void setY9(double y9) {
 		this.y9 = y9;
 	}
-
+	/**
+	 * gives a random value between min and max
+	 * @param min
+	 * @param max
+	 * @return
+	 */
 	private int generateRandom(int min, int max) {
 		Random rand = new Random();
 		int randomNum = rand.nextInt((max-min)+1)+min;

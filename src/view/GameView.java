@@ -14,6 +14,7 @@ import assets.Ball;
 import assets.Barricade;
 import assets.Burst_Anim;
 import assets.Coin;
+import assets.Control_Function;
 import assets.Destroy_Blocks;
 import assets.GameElements;
 import assets.Magnet;
@@ -39,7 +40,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class GameView {
+public class GameView  implements Control_Function{
 	private GameElements gameelements;
 	private AnchorPane gamePane;
 	private Scene gameScene;
@@ -99,7 +100,12 @@ public class GameView {
 	private final static int wall_edge = 75/2+10;
 	private Burst_Anim burst;
 	private Stage mainStage;
-	
+	/**
+	 * constructor for game view
+	 * @param mainStage
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public GameView(Stage mainStage) throws ClassNotFoundException, IOException {
 		game_speed = 5;
 		this.mainStage = mainStage;
@@ -107,7 +113,9 @@ public class GameView {
 		createKeyListeners();
 		randomPosGen = new Random();
 	}
-	
+	/**
+	 *  this read for inputs
+	 */
 	public void createKeyListeners() {
 		gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
@@ -147,7 +155,11 @@ public class GameView {
 			}
 		});
 	}
-	
+	/**
+	 * Initializes stage 
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public void initializeStage() throws ClassNotFoundException, IOException {
 		gameelements = new GameElements();
 		gamePane = new AnchorPane();
@@ -195,6 +207,10 @@ public class GameView {
 		}
 		
 	}
+	/**
+	 * Creates a new Game
+	 * @param menuStage has menu stage as input
+	 */
 	public void createNewGame(Stage menuStage) {
 		this.menuStage = menuStage;
 		this.menuStage.hide();
@@ -314,6 +330,12 @@ public class GameView {
 		
 		gameStage.show();
 	}
+	/**
+	 *  loads save game
+	 * @param menuStage
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public void LoadSavedGame(Stage menuStage) throws ClassNotFoundException, IOException {
 		
 		GameElements ggg = deserialize_gameelements();
@@ -501,7 +523,11 @@ public class GameView {
 		
 		gameStage.show();
 	}
-	
+	/**
+	 * creates a new coin
+	 * @param coin a coin instance
+	 * @param y value of y coordinate for coin
+	 */
 	private void createCoin(Coin coin , int y ) {
 		coin = new Coin();
 		if(coin.block_appear==true) {
@@ -512,6 +538,10 @@ public class GameView {
 			gamePane.getChildren().add(coin_display);
 		}
 	}
+	/**
+	 * loads a coin
+	 * @param coin
+	 */
 	private void loadCoin(Coin coin) {
 		if(coin.block_appear==true) {
 			coin_display = new ImageView(coin.block_path);
@@ -520,7 +550,10 @@ public class GameView {
 			gamePane.getChildren().add(coin_display);
 		}
 	}
-	private void moveCoin() {
+	/**
+	 * this function simulates the movement of coin
+	 */
+	public void moveCoin() {
 		
 		double coin_y = 0;
 	
@@ -534,6 +567,11 @@ public class GameView {
 			createCoin(coin, -50);
 		}	
 	}
+	/**
+	 * Serializes coin
+	 * @param root Instance of coin to be Serialized
+	 * @throws IOException
+	 */
 	public static void serialize_coin(Coin root)throws IOException{
         ObjectOutputStream out = null;
         if (root==null){
@@ -547,6 +585,12 @@ public class GameView {
             out.close();
         }
     }
+	/**
+	 *  deserializes coin
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
     public static Coin deserialize_coin() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         Coin newroot = null;
@@ -559,7 +603,11 @@ public class GameView {
             return newroot;
         }
     }
-    
+    /**
+	 * creates a new magnet
+	 * @param magnet a magnet instance
+	 * @param y value of y coordinate for magnet
+	 */
     private void createMagnet(Magnet magnet , int y ) {
 		magnet = new Magnet();
 		if(magnet.block_appear==true) {
@@ -570,6 +618,10 @@ public class GameView {
 			gamePane.getChildren().add(magnet_display);
 		}
 	}
+    /**
+	 * loads a magnet
+	 * @param magnet
+	 */
     private void loadMagnet( Magnet magnet) {
 		if(magnet.block_appear==true) {
 			magnet_display = new ImageView(magnet.block_path);
@@ -578,7 +630,10 @@ public class GameView {
 			gamePane.getChildren().add(magnet_display);
 		}
 	}
-    private void moveMagnet() {
+    /**
+	 * this function simulates the movement of magnet
+	 */
+    public void moveMagnet() {
 		
 		double magnet_y = 0;
 	
@@ -608,6 +663,11 @@ public class GameView {
 			coin_edge = 200;
 		}
 	}	
+    /**
+	 * Serializes magnet
+	 * @param root Instance of magnet to be Serialized
+	 * @throws IOException
+	 */
     public static void serialize_magnet(Magnet root)throws IOException{
         ObjectOutputStream out = null;
         if (root==null){
@@ -621,6 +681,14 @@ public class GameView {
             out.close();
         }
     }
+
+	 /**
+	  * deserializes magnet
+	  * @return
+	  * @throws IOException
+	  * @throws ClassNotFoundException
+	  */
+
     public static Magnet deserialize_magnet() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         Magnet newroot = null;
@@ -633,7 +701,11 @@ public class GameView {
             return newroot;
         }
     }
-    
+    /**
+	 * creates a new shield
+	 * @param shield a shield instance
+	 * @param y value of y coordinate for shield
+	 */
     private void createShield(Shield shield , int y ) {
 		shield = new Shield();
 		if(shield.block_appear==true) {
@@ -644,7 +716,11 @@ public class GameView {
 			gamePane.getChildren().add(shield_display);
 		}
 	}
-	private void loadShield(Shield shield) {
+    /**
+	 * loads a shield
+	 * @param shield
+	 */
+	public void loadShield(Shield shield) {
 		if(shield.block_appear==true) {
 			shield_display = new ImageView(shield.block_path);
 			shield_display.setLayoutY(shield.gety());
@@ -652,7 +728,11 @@ public class GameView {
 			gamePane.getChildren().add(shield_display);
 		}
 	}
-	private void moveShield() {
+
+	 /**
+	 * this function simulates the movement of shield
+	 */
+	public void moveShield() {
 		
 		double shield_y = 0;
 	
@@ -677,6 +757,12 @@ public class GameView {
 		}
 		
 	}
+	/**
+	 * Serializes shield
+	 * @param root Instance of shield to be Serialized
+	 * @throws IOException
+	 */
+
 	public static void serialize_shield(Shield root)throws IOException{
 		ObjectOutputStream out = null;
         if (root==null){
@@ -690,6 +776,13 @@ public class GameView {
             out.close();
         }
     }
+	/**
+	  * deserializes shield
+	  * @return
+	  * @throws IOException
+	  * @throws ClassNotFoundException
+	  */
+
     public static Shield deserialize_shield() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         Shield newroot = null;
@@ -703,8 +796,12 @@ public class GameView {
         }
     }
    
-    
-	private void createdestroy_block(Destroy_Blocks destroy_blocks , int y ) {
+    /**
+	 * creates a new destroy_blocks
+	 * @param destroy_blocks a destroy_blocks instance
+	 * @param y value of y coordinate for destroy_blocks
+	 */
+	public void createdestroy_block(Destroy_Blocks destroy_blocks , int y ) {
 		destroy_blocks = new Destroy_Blocks();
 		if(destroy_blocks.block_appear==true) {
 			destroy_blocks_display = new ImageView(destroy_blocks.block_path);
@@ -714,6 +811,11 @@ public class GameView {
 			gamePane.getChildren().add(destroy_blocks_display);
 		}
 	}
+
+	 /**
+	 * loads a destroy_blocks
+	 * @param destroy_blocks
+	 */
 	private void loadDestroy_Blocks(Destroy_Blocks destroy_blocks) {
 		if(destroy_blocks.block_appear==true) {
 			destroy_blocks_display = new ImageView(destroy_blocks.block_path);
@@ -722,7 +824,10 @@ public class GameView {
 			gamePane.getChildren().add(destroy_blocks_display);
 		}
 	}
-	private void movedestroy_blocks() {
+	/**
+	 * this function simulates the movement of destroy_blocks
+	 */
+	public void movedestroy_blocks() {
 		
 		double destroy_blocks_y = 0;
 	
@@ -737,6 +842,11 @@ public class GameView {
 			createdestroy_block(destroy_blocks, -2400);
 		}	
 	}
+	/**
+	 * Serializes destroy_blocks
+	 * @param root Instance of destroy_blocks to be Serialized
+	 * @throws IOException
+	 */
 	public static void serialize_destroy_blocks(Destroy_Blocks root)throws IOException{
         ObjectOutputStream out = null;
         if (root==null){
@@ -750,6 +860,12 @@ public class GameView {
             out.close();
         }
     }
+	/**
+	  * deserializes destroy_blocks
+	  * @return
+	  * @throws IOException
+	  * @throws ClassNotFoundException
+	  */
     public static Destroy_Blocks deserialize_destroy_blocks() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         Destroy_Blocks newroot = null;
@@ -762,7 +878,11 @@ public class GameView {
             return newroot;
         }
     }	
-    
+    /**
+	 * creates a new ball
+	 * @param ball a ball instance
+	 * @param y value of y coordinate for ball
+	 */
     private void createBall(Ball ball , int y ) {
 		ball = new Ball();
 		if(ball.block_appear==true) {
@@ -780,6 +900,10 @@ public class GameView {
 		ball_value.setLayoutY(ball_display.getLayoutY() + 13);
 		gamePane.getChildren().add(ball_value);
 	}
+    /**
+	 * loads a ball
+	 * @param ball
+	 */
     private void loadBall(Ball ball) {
 		if(ball.block_appear==true) {
 			ball_display = new ImageView(ball.block_path);
@@ -794,6 +918,9 @@ public class GameView {
 		ball_value.setLayoutY(ball_display.getLayoutY() + 13);
 		gamePane.getChildren().add(ball_value);
 	}
+    /**
+	 * this function simulates the movement of ball
+	 */
     private void moveBall() {
 		
 		double ball_y = 0;
@@ -810,6 +937,13 @@ public class GameView {
 			createBall(ball, -50);
 		}	
 	}
+
+	 /**
+	 * Serializes ball
+	 * @param root Instance of ball to be Serialized
+	 * @throws IOException
+	 */
+
 	public static void serialize_ball(Ball root)throws IOException{
         ObjectOutputStream out = null;
         if (root==null){
@@ -823,6 +957,12 @@ public class GameView {
             out.close();
         }
     }
+	/**
+	  * deserializes ball
+	  * @return
+	  * @throws IOException
+	  * @throws ClassNotFoundException
+	  */
     public static Ball deserialize_ball() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         Ball newroot = null;
@@ -835,7 +975,11 @@ public class GameView {
             return newroot;
         }
     }
-    
+    /**
+	 * creates a new barricades
+	 * @param barricades a barricades instance
+	 * @param y value of y coordinate for barricades
+	 */
     private void createBarricade(Barricade barricade , int y ) {
     	
 		for(int i=0; i<barricade_display.length; i++) {
@@ -847,6 +991,10 @@ public class GameView {
 			gamePane.getChildren().add(barricade_display[i]);
 		}
 	}
+    /**
+	 * loads a barricade
+	 * @param barricade
+	 */
     private void loadBarricade(Barricade barricade) {
 		if(barricade.block_appear==true) {
 			barricade_display[0].setLayoutX(barricade.getX0());
@@ -874,7 +1022,11 @@ public class GameView {
 			}
 		}
 	}
-	private void moveBarricade() {
+
+	 /**
+	 * this function simulates the movement of barricade
+	 */
+	public void moveBarricade() {
 		
 		for(int i=0; i<barricade_display.length; i++) {
 			barricade_display[i].setLayoutY(barricade_display[i].getLayoutY()+game_speed);
@@ -886,6 +1038,11 @@ public class GameView {
 			}
 		}
 	}
+	/**
+	 * Serializes barricade
+	 * @param root Instance of barricade to be Serialized
+	 * @throws IOException
+	 */
 	public static void serialize_barricade(Barricade root)throws IOException{
         ObjectOutputStream out = null;
         if (root==null){
@@ -899,6 +1056,12 @@ public class GameView {
             out.close();
         }
     }
+	/**
+	  * deserializes barricade
+	  * @return
+	  * @throws IOException
+	  * @throws ClassNotFoundException
+	  */
     public static Barricade deserialize_barricade() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         Barricade newroot = null;
@@ -911,11 +1074,18 @@ public class GameView {
             return newroot;
         }
     }
-	
+	/**
+	 *  a function to create 2 initial walls
+	 */
 	private void createInitWall() {
 		createWall1(wall1,-(game_height/2));
 		createWall2(wall2,-(game_height + game_height/2));
 	}
+	/**
+	 *  creates wall1
+	 * @param wall1
+	 * @param Y
+	 */
 	private void createWall1(Wall wall1, int Y) {
 		wall1 = new Wall(snake.getlen()+1);
 		Y = Y +200;
@@ -937,6 +1107,11 @@ public class GameView {
 			}
 		}
 	}
+	/**
+	 * creates wall2
+	 * @param wall2
+	 * @param Y
+	 */
 	private void createWall2(Wall wall2, int Y) {
 		wall2 = new Wall(snake.getlen()+1);
 		Y = Y+200;
@@ -957,6 +1132,11 @@ public class GameView {
 			}
 		}
 	}
+	/**
+	 * loads wall
+	 * @param wall1
+	 * @param wall2
+	 */
 	private void loadWall(Wall wall1, Wall wall2) {
 		for(int i=0; i<8; i++) {
 			if(wall1.block_appear[i]==true) {
@@ -989,6 +1169,9 @@ public class GameView {
 			}
 		}
 	}
+	/**
+	 * this function simulates the movement of walls
+	 */
 	private void moveWall() {
 		
 		double wall1_y = 0;
@@ -1043,6 +1226,12 @@ public class GameView {
 			createWall2(wall2, -(game_height + game_height/2));
 		}
 	}
+
+	 /**
+	 * Serializes wall1
+	 * @param root Instance of wall1 to be Serialized
+	 * @throws IOException
+	 */
 	public static void serialize_wall1(Wall root)throws IOException{
         ObjectOutputStream out = null;
         if (root==null){
@@ -1057,6 +1246,13 @@ public class GameView {
             out.close();
         }
     }
+	/**
+	  * deserializes wall1
+	  * @return
+	  * @throws IOException
+	  * @throws ClassNotFoundException
+	  */
+
     public static Wall deserialize_wall1() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         Wall newroot = null;
@@ -1069,6 +1265,11 @@ public class GameView {
             return newroot;
         }
     }
+    /**
+	 * Serializes wall1
+	 * @param root Instance of wall1 to be Serialized
+	 * @throws IOException
+	 */
     public static void serialize_wall2(Wall root)throws IOException{
         ObjectOutputStream out = null;
         if (root==null){
@@ -1082,6 +1283,13 @@ public class GameView {
             out.close();
         }
     }
+    /**
+	  * deserializes wall2
+	  * @return
+	  * @throws IOException
+	  * @throws ClassNotFoundException
+	  */
+
     public static Wall deserialize_wall2() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         Wall newroot = null;
@@ -1094,7 +1302,9 @@ public class GameView {
             return newroot;
         }
     }
-	
+	/**
+	 *  create a snake instance from Snake class
+	 */
 	private void createSnake() {
 		snake = new Snake();
 		snake_display = new ImageView("resources/ball.png");
@@ -1108,6 +1318,9 @@ public class GameView {
 		snake_value.setLayoutY(game_height - 200 + 13);
 		gamePane.getChildren().add(snake_value);
 	}
+	/**
+	 * moves the snake
+	 */
 	private void moveSnake() {
 		
 		ArrayList<Integer> left = new ArrayList<>();
@@ -1189,6 +1402,9 @@ public class GameView {
 		gamePane.getChildren().remove(snake_value);
 		gamePane.getChildren().add(snake_value);
 	}
+	/**
+	 * sets the snake tail dynamically during the game
+	 */
 	private void setsnaketail() {
 		int x = snake.getlen();
 		if(snake_tail==null) {
@@ -1219,6 +1435,9 @@ public class GameView {
 		}*/
 	}
 	
+	/**
+	 * creates a game loop
+	 */
 	private void createGameLoop() {
 		long startTime = System.currentTimeMillis();
 		gameTimer = new AnimationTimer() {
@@ -1256,6 +1475,9 @@ public class GameView {
 		gameTimer.start();
 	}
 	
+	/**
+	 * sets speed of the game
+	 */
 	private void setSpeed() {
 		if(snake.getlen()<10) {
 			game_speed = 5;
@@ -1271,6 +1493,9 @@ public class GameView {
 		}
 	}
 	
+	/**
+	 * creates a background
+	 */
 	private void createBackground() {
 		gridPane1 = new GridPane();
 		gridPane2 = new GridPane();
@@ -1285,6 +1510,10 @@ public class GameView {
 		gridPane2.setLayoutY(-800);
 		gamePane.getChildren().addAll(gridPane1, gridPane2);
 	}
+	
+	/**
+	 * moves background
+	 */
 	private void moveBackground() {
 		gridPane1.setLayoutY(gridPane1.getLayoutY() + 1);
 		gridPane2.setLayoutY(gridPane2.getLayoutY() + 1);
@@ -1297,6 +1526,10 @@ public class GameView {
 		}
 	}
 	
+	/**
+	 * handles collision
+	 * @throws InterruptedException
+	 */
 	private void collisionHandling() throws InterruptedException {
 		for(int i=0; i<wall2_display.length; i++) {
 			if(wall2_display[i]!=null) {
@@ -1410,15 +1643,32 @@ public class GameView {
 		
 	}
 	
+	/**
+	 * calculate distance between 2 points
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
 	private double calcDist(double x1, double y1, double x2, double y2) {
 		return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
 	}
 	
+	/**
+	 * updates points of player
+	 * @param i
+	 */
 	private void updatePoints(int i) {
 		points+=i;
 		points_label.setText(Integer.toString(points));
 	}
 	
+	/**
+	 * starts animation
+	 * @param x
+	 * @param y
+	 */
 	private void Animation(int x, int y) {
 		burst = new Burst_Anim(x, y);
 		
@@ -1431,6 +1681,9 @@ public class GameView {
 		gamePane.getChildren().add(burst.c7);
 	}
 	
+	/**
+	 * helper function for animation
+	 */
 	private void moveCircles() {
 		burst.c1.setLayoutY(burst.c1.getLayoutY() - 15);
 		
@@ -1450,7 +1703,10 @@ public class GameView {
 		burst.c7.setLayoutX(burst.c7.getLayoutX() + 8);
 		burst.c7.setLayoutY(burst.c7.getLayoutY() - 10);
 	}
-	
+
+	/**
+	 * helper function for animation
+	 */
 	private void positionBurst(double x, double y) {
 		burst.c1.setLayoutX(x);
 		burst.c1.setLayoutY(y);
@@ -1473,7 +1729,11 @@ public class GameView {
 		burst.c7.setLayoutX(x);
 		burst.c7.setLayoutY(y);
 	}
-	
+	/**
+	 * serializes top players
+	 * @param root
+	 * @throws IOException
+	 */
 	public static void serialize_topplayer(TopPlayers root)throws IOException{
 		ObjectOutputStream out = null;
         if (root==null){
@@ -1487,7 +1747,13 @@ public class GameView {
             out.close();
         }
     }
-    public static TopPlayers deserialize_topplayer() throws IOException,ClassNotFoundException{
+    /**
+     * deserializes top players
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+	public static TopPlayers deserialize_topplayer() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         TopPlayers newroot = null;
         try{
@@ -1499,6 +1765,11 @@ public class GameView {
             return newroot;
         }
     }
+	/**
+	 * serializes game elements
+	 * @param root
+	 * @throws IOException
+	 */
     public static void serialize_gameelements(GameElements root)throws IOException{
 		ObjectOutputStream out = null;
         if (root==null){
@@ -1512,6 +1783,12 @@ public class GameView {
             out.close();
         }
     }
+    /**
+     * deserializes game elements
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public static GameElements deserialize_gameelements() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         GameElements newroot = null;
@@ -1524,6 +1801,11 @@ public class GameView {
             return newroot;
         }
     }
+    /**
+     * checks whether the game has ended or not
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	private void checkEnd() throws IOException, ClassNotFoundException {
 		if(snake.getlen()<0) {
 			gameelements = new GameElements(Integer.parseInt(snake_value.getText()), has_magnet ,has_shield,Integer.parseInt(points_label.getText()),wall1_values,wall2_values);

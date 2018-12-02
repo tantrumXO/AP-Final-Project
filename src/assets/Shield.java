@@ -10,6 +10,9 @@ public class Shield implements Serializable {
 	public boolean block_appear;
 	private double x;
 	private double y;
+	/**
+	 * Constructor
+	 */
 	public Shield() {
 		x=0;
 		y=0;
@@ -23,18 +26,40 @@ public class Shield implements Serializable {
 				block_appear = false;
 			} 	
 	}
+	/**
+	 * returns x
+	 * @return
+	 */
 	public double getx() {
 		return x;
 	}
+	/**
+	 * returns y
+	 * @return
+	 */
 	public double gety() {
 		return y;
 	}
+	/**
+	 * sets x
+	 * @param d
+	 */
 	public void setx(double d) {
 		x = d;
 	}
+	/**
+	 * sets y
+	 * @param a
+	 */
 	public void sety(double a) {
 		y = a;
 	}
+	/**
+	 * generates a random value between min and max
+	 * @param min
+	 * @param max
+	 * @return
+	 */
 	private int generateRandom(int min, int max) {
 		Random rand = new Random();
 		int randomNum = rand.nextInt((max-min)+1)+min;

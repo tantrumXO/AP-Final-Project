@@ -6,6 +6,9 @@ import view.MenuView;
 
 
 public class Main extends Application {
+	/**
+	 * Start method to initialize game 
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -16,7 +19,10 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * the Main function
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}

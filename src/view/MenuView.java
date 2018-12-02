@@ -35,7 +35,11 @@ public class MenuView {
 	private final static int button_start_Y = 350;
 	
 	List<SnakeButton> menuButtons;
-	
+	/**
+	 * Constructor of the class
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public MenuView() throws ClassNotFoundException, IOException {
 		
 		try {
@@ -60,11 +64,19 @@ public class MenuView {
 		createBackground();
 		createScore();
 	}
-	
+	/**
+	 * returns main stage
+	 * @return
+	 */
 	public Stage getMainStage() {
 		return mainStage;
 	}
-	
+	/**
+	 * deserialize top players classes
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public static TopPlayers deserialize_topplayer() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         TopPlayers newroot = null;
@@ -77,14 +89,19 @@ public class MenuView {
             return newroot;
         }
     }
-	
+	/**
+	 * Adds a menu button
+	 * @param button
+	 */
 	private void addMenuButton(SnakeButton button) {
 		button.setLayoutX(button_start_X);
 		button.setLayoutY(button_start_Y + menuButtons.size()*100);
 		menuButtons.add(button);
 		mainPane.getChildren().add(button);
 	}
-	
+	/**
+	 * creates a play button
+	 */
 	private void createPlayButton() {
 		SnakeButton playButton = new SnakeButton("NEW GAME");
 		addMenuButton(playButton);
@@ -104,6 +121,11 @@ public class MenuView {
 			}
 		});
 	}
+	/**
+	 * creates a load button
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	private void createLoadSaveButton() throws IOException,ClassNotFoundException{
 		SnakeButton playButton = new SnakeButton("LOAD");
 		addMenuButton(playButton);
@@ -122,6 +144,9 @@ public class MenuView {
 			}
 		});
 	}
+	/**
+	 * creates a Leader board Button
+	 */
 	private void createLeaderboardButton() {
 		SnakeButton leaderboardButton = new SnakeButton("LEADERBOARD");
 		addMenuButton(leaderboardButton);
@@ -134,7 +159,9 @@ public class MenuView {
 			}
 		});
 	}
-	
+	/**
+	 * Creates a Exit button
+	 */
 	private void createExitButton() {
 		SnakeButton exitButton = new SnakeButton("EXIT");
 		addMenuButton(exitButton);
@@ -146,13 +173,17 @@ public class MenuView {
 			}
 		});
 	}
-	
+	/**
+	 * Creates a background
+	 */
 	private void createBackground() {
 		Image backgroundImage = new Image("resources/background.png", 600, 800, false, true);
 		BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
 		mainPane.setBackground(new Background(background));
 	}
-	
+	/**
+	 * Creates prev score
+	 */
 	private void createScore() {
 		Text prevScore = new Text();
 		prevScore.setText(Integer.toString(topplayers.getLastplayer().getScore()));

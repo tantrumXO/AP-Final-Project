@@ -14,7 +14,10 @@ public class SnakeButton extends Button {
 	private final String font_path = "src/resources/SIMPLIFICA_Typeface.ttf";
 	private final String button_pressed_style = "-fx-background-color: transparent; -fx-text-fill: white; -fx-background-image: url('/resources/purple_button_pressed.png');";
 	private final String button_style = "-fx-background-color: transparent; -fx-text-fill: white; -fx-background-image: url('/resources/purple_button.png');";
-
+	/**
+	 * Constructor
+	 * @param text
+	 */
 	public SnakeButton(String text) {
 		setText(text);
 		setButtonFont();
@@ -23,7 +26,9 @@ public class SnakeButton extends Button {
 		setStyle(button_style);
 		initializeButtonListeners();
 	}
-	
+	/**
+	 * set the font
+	 */
 	private void setButtonFont() {
 		try {
 			setFont(Font.loadFont(new FileInputStream(font_path), 23));
@@ -32,21 +37,27 @@ public class SnakeButton extends Button {
 			setFont(Font.font("Verdana", 23));
 		}
 	}
-	
+	/**
+	 * sets button pressed style
+	 */
 	private void setButtonPressedStyle() {
 		setStyle(button_pressed_style);
 		setPrefHeight(70);
 		setLayoutY(getLayoutY() - 2);
 		setLayoutX(getLayoutX() - 2);
 	}
-	
+	/**
+	 * sets button released style
+	 */
 	private void setButtonReleasedStyle() {
 		setStyle(button_style);
 		setPrefHeight(70);
 		setLayoutY(getLayoutY() + 2);
 		setLayoutX(getLayoutX() + 2);
 	}
-	
+	/**
+	 * Initialize button listeners
+	 */
 	private void initializeButtonListeners() {
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override

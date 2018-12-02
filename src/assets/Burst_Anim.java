@@ -11,7 +11,11 @@ public class Burst_Anim {
 	public Circle c5;
 	public Circle c6;
 	public Circle c7;
-	
+	/**
+	 * Constructor
+	 * @param x
+	 * @param y
+	 */
 	public Burst_Anim(int x, int y) {
 		c1 = new Circle();
 		c1.setCenterX(x);

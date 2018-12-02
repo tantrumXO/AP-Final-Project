@@ -51,7 +51,9 @@ public class LeaderBoard {
 		}
 		initializeStage();
 	}
-	
+	/**
+	 * initializes stage
+	 */
 	public void initializeStage() {
 		gamePane = new AnchorPane();
 		gameScene = new Scene(gamePane, game_width, game_height);
@@ -63,6 +65,12 @@ public class LeaderBoard {
 		times = new Label[10];
 		scores = new Label[10];
 	}
+	/**
+	 * deserializes players
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public static TopPlayers deserialize_topplayer() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
         TopPlayers newroot = null;
@@ -75,6 +83,9 @@ public class LeaderBoard {
             return newroot;
         }
     }
+	/**
+	 * creates background
+	 */
 	private void createBackground() {
 		gridPane1 = new GridPane();
 		gridPane2 = new GridPane();
@@ -104,6 +115,9 @@ public class LeaderBoard {
 		gamePane.getChildren().addAll(gridPane1, gridPane2, title, grid, backButton);
 	}
 	
+	/**
+	 * moves background
+	 */
 	private void moveBackground() {
 		gridPane1.setLayoutY(gridPane1.getLayoutY() - 0.5);
 		gridPane2.setLayoutY(gridPane2.getLayoutY() - 0.5);
@@ -115,7 +129,10 @@ public class LeaderBoard {
 			gridPane2.setLayoutY(800);
 		}
 	}
-	
+	/**
+	 * Creates a new Window
+	 * @param menuStage
+	 */
 	public void createNewWindow(Stage menuStage) {
 		this.menuStage = menuStage;
 		this.menuStage.hide();
@@ -123,7 +140,9 @@ public class LeaderBoard {
 		createGameLoop();
 		gameStage.show();
 	}
-	
+	/**
+	 * Creates a game Loop
+	 */
 	private void createGameLoop() {
 		gameTimer = new AnimationTimer() {
 			@Override
@@ -135,7 +154,9 @@ public class LeaderBoard {
 		
 		gameTimer.start();
 	}
-	 
+	 /**
+	  *  Display the scores
+	  */
 	private void displayScores() {
 		ArrayList<Player> top10 = topplayers.getPlayers();
 		System.out.println(top10.toString());

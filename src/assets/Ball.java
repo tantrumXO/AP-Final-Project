@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Random;
 
 
-public class Ball implements Serializable{
+public class Ball extends Token implements Serializable {
 	private static final long serialVersionUID = 6L;
 	public String block_path;
 	public boolean block_appear;
