@@ -40,7 +40,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class GameView  implements Control_Function{
+public class GameView{
 	private GameElements gameelements;
 	private AnchorPane gamePane;
 	private Scene gameScene;
