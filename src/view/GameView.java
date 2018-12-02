@@ -1214,12 +1214,14 @@ public class GameView {
 				gamePane.getChildren().remove(destroy_blocks_display);
 				for(int i=0;i<wall1_display.length;i++) {
 					if(wall1_display[i].getLayoutY() > 0 && wall1_display[i].getLayoutY() < 800  ) {
+						updatePoints(Integer.parseInt(wall1_values[i].getText()));
 						wall1_display[i].setLayoutY(wall1_display[i].getLayoutY() - 800);
 						wall1_values[i].setLayoutY(wall1_values[i].getLayoutY() - 800);
 					}	
 				}
 				for(int i=0;i<wall2_display.length;i++) {
 					if(wall2_display[i].getLayoutY() > 0 && wall2_display[i].getLayoutY() < 800  ) {
+						updatePoints(Integer.parseInt(wall2_values[i].getText()));
 						wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() - 800);
 						wall2_values[i].setLayoutY(wall2_values[i].getLayoutY() -  800);
 					}
