@@ -8,6 +8,7 @@ import java.util.List;
 
 import assets.SnakeButton;
 import assets.TopPlayers;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -17,6 +18,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -63,6 +66,10 @@ public class MenuView {
 		createExitButton();
 		createBackground();
 		createScore();
+		
+//		Media media = new Media("resources/music.mp3");
+//		MediaPlayer player = new MediaPlayer(media);
+//		player.play();
 	}
 	/**
 	 * returns main stage
