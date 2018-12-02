@@ -16,7 +16,7 @@ public class Leaderboard implements Serializable{
 	public void addplayer(Player p) {
 		players.add(p);
 		Collections.sort(players,new PlayerComp());
-		while(players.size()>10) {
+		while(players.size()>10) { 
 			players.remove(10);
 		}
 	}

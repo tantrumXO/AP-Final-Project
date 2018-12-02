@@ -21,8 +21,7 @@ public class Shield implements Serializable {
 			}
 			else {
 				block_appear = false;
-			}
-		
+			} 	
 	}
 	public double getx() {
 		return x;

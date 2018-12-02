@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
+
 import assets.Ball;
 import assets.Barricade;
 import assets.Coin;
@@ -28,6 +29,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -48,6 +50,9 @@ public class GameView {
 	private boolean rightKeyPressed;
 	private boolean paused;
 	private AnimationTimer gameTimer;
+	
+	private Text[] wall1_values;
+	private Text[] wall2_values;
 	
 	private GridPane gridPane1;
 	private GridPane gridPane2;
@@ -134,9 +139,13 @@ public class GameView {
 		gameStage.setTitle("Snake VS Blocks");
 		wall1_display = new ImageView[8];
 		wall2_display = new ImageView[8];
+		wall1_values = new Text[8];
+		wall2_values = new Text[8];
 		for(int i=0;i<8;i++) {
 			wall1_display[i] = new ImageView();
 			wall2_display[i] = new ImageView();
+			wall1_values[i] = new Text();
+			wall2_values[i] = new Text();
 		}
 		snake_tail = new ArrayList<ImageView>();
 		coin_display = new ImageView();
@@ -154,10 +163,6 @@ public class GameView {
 		ball = new Ball();
 		barricade = new Barricade();
 		destroy_blocks = new Destroy_Blocks();
-		has_shield =false;
-		shield_time = 0;
-		has_magnet = false;
-		magnet_time=0;
 	}
 	public void createNewGame(Stage menuStage) {
 		this.menuStage = menuStage;
@@ -815,9 +820,18 @@ public class GameView {
 		for(int i=0; i<8; i++) {
 			if(wall1.block_appear[i]==true) {
 				wall1_display[i] = new ImageView(wall1.block_path[i]);
+				wall1_values[i] = new Text(Integer.toString(wall1.values[i]));
+				wall1_values[i].setFill(Color.WHITE);
+				wall1_values[i].setStyle("-fx-font: 16 Helvetica;");
+				
+				
 				wall1_display[i].setLayoutY(Y);
+				wall1_values[i].setLayoutY(Y+75/2);
 				wall1_display[i].setLayoutX(75*(i));
+				wall1_values[i].setLayoutX(75*i + 75/2);
+				
 				gamePane.getChildren().add(wall1_display[i]);
+				gamePane.getChildren().add(wall1_values[i]);
 			}
 		}
 	}
@@ -827,9 +841,17 @@ public class GameView {
 		for(int i=0; i<8; i++) {
 			if(wall2.block_appear[i]==true) {
 				wall2_display[i] = new ImageView(wall2.block_path[i]);
+				wall2_values[i] = new Text(Integer.toString(wall2.values[i]));
+				wall2_values[i].setFill(Color.WHITE);
+				wall2_values[i].setStyle("-fx-font: 16 Helvetica;");
+				
 				wall2_display[i].setLayoutY(Y);
+				wall2_values[i].setLayoutY(Y+75/2);
 				wall2_display[i].setLayoutX(75*(i));
+				wall2_values[i].setLayoutX(75*i + 75/2);
+				
 				gamePane.getChildren().add(wall2_display[i]);
+				gamePane.getChildren().add(wall2_values[i]);
 			}
 		}
 	}
@@ -855,10 +877,28 @@ public class GameView {
 		
 		double wall1_y = 0;
 		double wall2_y = 0;
+		if(wall1_display[0]!=null && wall2_display[0]!=null  ) {
+			if(wall1_display[0].getLayoutY()< 0 && wall1_display[0].getLayoutY() < 0  ) {
+				if(wall1_display[0].getLayoutY() >= wall2_display[0].getLayoutY()  && (wall1_display[0].getLayoutY() - wall2_display[0].getLayoutY() < 300)) {
+					for(int i=0;i<wall2_display.length;i++ ) {
+						wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() - 500);
+						wall2_values[i].setLayoutY(wall2_values[i].getLayoutY() - 500);
+					}
+				}
+				
+				if(wall2_display[0].getLayoutY() >= wall1_display[0].getLayoutY()  && (wall2_display[0].getLayoutY() - wall1_display[0].getLayoutY() < 300)) {
+					for(int i=0;i<wall1_display.length;i++ ) {
+						wall1_display[i].setLayoutY(wall1_display[i].getLayoutY() - 500);
+						wall1_values[i].setLayoutY(wall1_values[i].getLayoutY() - 500);
+					}
+				}
+			}
+		}
 		
 		for(int i=0; i<8; i++) {
 			if(wall1_display[i]!=null) {
 				wall1_display[i].setLayoutY(wall1_display[i].getLayoutY() + 5);
+				wall1_values[i].setLayoutY(wall1_values[i].getLayoutY() + 5);
 				//System.out.print(wall1_display[i].getLayoutY() + " " );
 				wall1_y = wall1_display[i].getLayoutY();
 			}
@@ -867,12 +907,14 @@ public class GameView {
 		for(int i=0; i<8; i++) {
 			if(wall2_display[i]!=null) {
 				wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() + 5);
+				wall2_values[i].setLayoutY(wall2_values[i].getLayoutY() + 5);
 				wall2_y = wall2_display[i].getLayoutY();
 			}
 		}
 		if(wall1_y >= 800) {
 			for(int i=0;i<8;i++) {
 				gamePane.getChildren().remove(wall1_display[i]);
+				gamePane.getChildren().remove(wall1_values[i]);
 			}
 			createWall1(wall1, -(game_height + game_height/2));
 		}
@@ -880,6 +922,7 @@ public class GameView {
 		if(wall2_y >= 800) {
 			for(int i=0;i<8;i++) {
 				gamePane.getChildren().remove(wall2_display[i]);
+				gamePane.getChildren().remove(wall2_values[i]);
 			}
 			createWall2(wall2, -(game_height + game_height/2));
 		}
@@ -968,7 +1011,7 @@ public class GameView {
 					for(int i=0; i<left.size(); i++) {
 						if((snake_display.getLayoutX()) - (barricade_display[left.get(i)].getLayoutX()) < 15) {
 							close_check = true;
-							//System.out.println("FUCK");
+						
 						}
 					}
 					if(!close_check) {
@@ -992,7 +1035,7 @@ public class GameView {
 					for(int i=0; i<right.size(); i++) {
 						if((barricade_display[right.get(i)].getLayoutX()) - (snake_display.getLayoutX()) < 30) {
 							close_check = true;
-							System.out.println("FUCK");
+							
 						}
 					}
 					if(!close_check) {
@@ -1109,13 +1152,13 @@ public class GameView {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall2_display[i].getLayoutX()+75/2, wall2_display[i].getLayoutY()+75/2) ) {
 					//setPosition(wall2_display[i]);
 					wall2_display[i].setLayoutY(-1000);
+					if(!has_shield) {
+						snake.setlen(-Integer.parseInt(wall2_values[i].getText()));
+					}
 					gamePane.getChildren().remove(wall2_display[i]);
+					gamePane.getChildren().remove(wall2_values[i]);
 					//System.out.println("hello");
 					updatePoints(1);
-					if(has_shield!=true)
-					{	
-						snake.setlen(-1);
-					}
 				}
 			}
 		}
@@ -1124,14 +1167,14 @@ public class GameView {
 			if(wall1_display[i]!=null) {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall1_display[i].getLayoutX()+75/2, wall1_display[i].getLayoutY()+75/2) ) {
 					//setPosition(wall1_display[i]);
-					wall1_display[i].setLayoutY(-900);
+					wall1_display[i].setLayoutY(-1000);
+					if(!has_shield) {
+						snake.setlen(-Integer.parseInt(wall1_values[i].getText()));
+					}
 					gamePane.getChildren().remove(wall1_display[i]);
+					gamePane.getChildren().remove(wall1_values[i]);
 					//System.out.println("hello");
 					updatePoints(1);
-					snake.setlen(-1);if(has_shield!=true)
-					{	
-						snake.setlen(-1);
-					}
 				}
 			}
 		}
@@ -1170,12 +1213,14 @@ public class GameView {
 				gamePane.getChildren().remove(destroy_blocks_display);
 				for(int i=0;i<wall1_display.length;i++) {
 					if(wall1_display[i].getLayoutY() > 0 && wall1_display[i].getLayoutY() < 800  ) {
-						wall1_display[i].setLayoutY(wall1_display[i].getLayoutY() -800);
+						wall1_display[i].setLayoutY(wall1_display[i].getLayoutY() - 800);
+						wall1_values[i].setLayoutY(wall1_values[i].getLayoutY() - 800);
 					}	
 				}
 				for(int i=0;i<wall2_display.length;i++) {
 					if(wall2_display[i].getLayoutY() > 0 && wall2_display[i].getLayoutY() < 800  ) {
-						wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() -800);
+						wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() - 800);
+						wall2_values[i].setLayoutY(wall2_values[i].getLayoutY() -  800);
 					}
 				}
 			}

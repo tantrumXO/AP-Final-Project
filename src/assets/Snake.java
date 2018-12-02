@@ -4,7 +4,7 @@ public class Snake {
 	private int length;
 	private boolean dead;
 	public Snake() {
-		this.length = 0;
+		this.length = 5;
 		this.dead = false;
 	}
 	public int getlen() {
