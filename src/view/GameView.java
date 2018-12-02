@@ -10,6 +10,7 @@ import java.util.Random;
 
 import assets.Ball;
 import assets.Barricade;
+import assets.Burst_Anim;
 import assets.Coin;
 import assets.Destroy_Blocks;
 import assets.Magnet;
@@ -45,6 +46,9 @@ public class GameView {
 	private Snake snake;
 	private ImageView snake_display;
 	private ArrayList<ImageView> snake_tail;
+	
+	private Text snake_value;
+	private Text ball_value;
 	
 	private boolean leftKeyPressed;
 	private boolean rightKeyPressed;
@@ -84,6 +88,7 @@ public class GameView {
 	private final static int snake_edge = 10;
 	private static int coin_edge = 20;
 	private final static int wall_edge = 75/2+10;
+	private Burst_Anim burst;
 	
 	public GameView() {
 		initializeStage();
@@ -163,6 +168,8 @@ public class GameView {
 		ball = new Ball();
 		barricade = new Barricade();
 		destroy_blocks = new Destroy_Blocks();
+		
+		burst = new Burst_Anim(300,300);
 	}
 	public void createNewGame(Stage menuStage) {
 		this.menuStage = menuStage;
@@ -177,6 +184,7 @@ public class GameView {
 		createBall(ball,-800);
 		createBarricade(barricade,-100);
 		createGameLoop();
+		Animation(300,400);
 		
 		
 		points_label = new Label();
@@ -684,6 +692,13 @@ public class GameView {
 			ball_display.setLayoutX(60*rand.nextInt(10));
 			gamePane.getChildren().add(ball_display);
 		}
+		Random rand = new Random();
+		ball_value = new Text(Integer.toString(rand.nextInt(4)+1));
+		ball_value.setFill(Color.WHITE);
+		ball_value.setStyle("-fx-font: 10 Helvetica;");
+		ball_value.setLayoutX(ball_display.getLayoutX() + 7);
+		ball_value.setLayoutY(ball_display.getLayoutY() + 13);
+		gamePane.getChildren().add(ball_value);
 	}
     private void loadBall(Ball ball) {
 		if(ball.block_appear==true) {
@@ -699,6 +714,7 @@ public class GameView {
 	
 		if(ball_display!=null) {
 			ball_display.setLayoutY(ball_display.getLayoutY() + 5);
+			ball_value.setLayoutY(ball_value.getLayoutY() + 5);
 			//System.out.println(ball_display.getLayoutY() + " " + ball_display.isVisible());
 			ball_y =ball_display.getLayoutY();
 		}
@@ -985,8 +1001,14 @@ public class GameView {
 		snake_display.setLayoutX(game_width/2);
 		snake_display.setLayoutY(game_height - 200);
 		gamePane.getChildren().add(snake_display);
+		snake_value = new Text(Integer.toString(snake.getlen())+1);
+		snake_value.setFill(Color.WHITE);
+		snake_value.setStyle("-fx-font: 10 Helvetica;");
+		snake_value.setLayoutX(game_width/2 + 7);
+		snake_value.setLayoutY(game_height - 200 + 13);
+		gamePane.getChildren().add(snake_value);
 	}
-	private void moveSnake() {
+private void moveSnake() {
 		
 		ArrayList<Integer> left = new ArrayList<>();
 		ArrayList<Integer> right = new ArrayList<>();
@@ -1016,10 +1038,12 @@ public class GameView {
 					}
 					if(!close_check) {
 						snake_display.setLayoutX(snake_display.getLayoutX() - 10);
+						snake_value.setLayoutX(snake_value.getLayoutX() - 10);
 					}
 				}
 				else {
 					snake_display.setLayoutX(snake_display.getLayoutX() - 10);
+					snake_value.setLayoutX(snake_value.getLayoutX() - 10);
 				}
 				//System.out.println(" snake_display x is - - " + snake_display.getLayoutX() );
 				/*for(int i=0;i<snake_tail.size();i++) {
@@ -1040,18 +1064,16 @@ public class GameView {
 					}
 					if(!close_check) {
 						snake_display.setLayoutX(snake_display.getLayoutX() + 10);
+						snake_value.setLayoutX(snake_value.getLayoutX() + 10);
 					} 
 				}
 				else {
 					snake_display.setLayoutX(snake_display.getLayoutX() + 10);
+					snake_value.setLayoutX(snake_value.getLayoutX() + 10);
 				}
-				//System.out.println(" snakedisplay x is - - " + snake_display.getLayoutX());
-				/*for(int i=0;i<snake_tail.size();i++) {
-					snake_tail.get(i).setX(snake_display.getX());
-				}*/
 			}
 		}
-		
+		snake_value.setText(Integer.toString(snake_tail.size()+1));
 		for(int i=0;i<snake_tail.size();i++) {
 			snake_tail.get(i).setLayoutX(snake_display.getLayoutX());
 			snake_tail.get(i).setLayoutY(snake_display.getLayoutY()+ (i+1)*20);
@@ -1064,8 +1086,9 @@ public class GameView {
 			gamePane.getChildren().add(snake_tail.get(i));
 		}
 		gamePane.getChildren().add(snake_display);
-		
-	}	
+		gamePane.getChildren().remove(snake_value);
+		gamePane.getChildren().add(snake_value);
+	}
 	private void setsnaketail() {
 		int x = snake.getlen();
 		if(snake_tail==null) {
@@ -1097,6 +1120,7 @@ public class GameView {
 	}
 	
 	private void createGameLoop() {
+		long startTime = System.currentTimeMillis();
 		gameTimer = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
@@ -1110,9 +1134,10 @@ public class GameView {
 				movedestroy_blocks();
 				moveBall();
 				moveBarricade();
+				moveCircles();
 				collisionHandling();
 				//System.out.print(snake.getlen() + " x is - " + snake_display.getLayoutX() + " y is -" + snake_display.getLayoutY() + " hi " +snake_tail.size() + "  :::: ");
-				System.out.println(magnet_time + " hsjvdsv" + shield_time + " sss " + gridPane1.getLayoutY() + " ll " +wall1_display[1].getLayoutY() + " hello " + wall2_display[1].getLayoutY() );
+				//System.out.println(magnet_time + " hsjvdsv" + shield_time + " sss " + gridPane1.getLayoutY() + " ll " +wall1_display[1].getLayoutY() + " hello " + wall2_display[1].getLayoutY() );
 			}
 		};
 		
@@ -1150,16 +1175,19 @@ public class GameView {
 		for(int i=0; i<wall2_display.length; i++) {
 			if(wall2_display[i]!=null) {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall2_display[i].getLayoutX()+75/2, wall2_display[i].getLayoutY()+75/2) ) {
-					//setPosition(wall2_display[i]);
-					wall2_display[i].setLayoutY(-1000);
-					updatePoints(Integer.parseInt(wall2_values[i].getText()));
-					if(!has_shield) {
-						snake.setlen(-Integer.parseInt(wall2_values[i].getText()));
+					if(wall2_display[i].isVisible()) {
+						wall2_display[i].setLayoutY(-1000);
+						updatePoints(Integer.parseInt(wall2_values[i].getText()));
+						if(!has_shield) {
+							snake.setlen(-Integer.parseInt(wall2_values[i].getText()));
+						}
+						gamePane.getChildren().remove(wall2_display[i]);
+						gamePane.getChildren().remove(wall2_values[i]);
+						//System.out.println("hello");
+						
+						positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
 					}
-					gamePane.getChildren().remove(wall2_display[i]);
-					gamePane.getChildren().remove(wall2_values[i]);
-					//System.out.println("hello");
-					
+					//setPosition(wall2_display[i]);
 				}
 			}
 		}
@@ -1167,15 +1195,18 @@ public class GameView {
 		for(int i=0; i<wall1_display.length; i++) {
 			if(wall1_display[i]!=null) {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall1_display[i].getLayoutX()+75/2, wall1_display[i].getLayoutY()+75/2) ) {
-					//setPosition(wall1_display[i]);
-					wall1_display[i].setLayoutY(-1000);
-					updatePoints(Integer.parseInt(wall1_values[i].getText()));
-					if(!has_shield) {
-						snake.setlen(-Integer.parseInt(wall1_values[i].getText()));
+					if(wall1_display[i].isVisible()) {
+						wall1_display[i].setLayoutY(-1000);
+						updatePoints(Integer.parseInt(wall1_values[i].getText()));
+						if(!has_shield) {
+							snake.setlen(-Integer.parseInt(wall1_values[i].getText()));
+						}
+						gamePane.getChildren().remove(wall1_display[i]);
+						gamePane.getChildren().remove(wall1_values[i]);
+						//System.out.println("hello");
+						
+						positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
 					}
-					gamePane.getChildren().remove(wall1_display[i]);
-					gamePane.getChildren().remove(wall1_values[i]);
-					//System.out.println("hello");
 				}
 			}
 		}
@@ -1188,6 +1219,7 @@ public class GameView {
 				
 				//System.out.println("adding");
 				updatePoints(1);
+				positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
 				
 			}
 		}
@@ -1197,6 +1229,7 @@ public class GameView {
 				gamePane.getChildren().remove(magnet_display);
 				has_magnet=true;
 				magnet_time = gridPane1.getLayoutY();
+				positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
 			}
 		}
 		if(shield_display!=null) {
@@ -1205,6 +1238,7 @@ public class GameView {
 				gamePane.getChildren().remove(shield_display);
 				has_shield =true;
 				shield_time = gridPane1.getLayoutY();
+				positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
 				// has has_shield boolean value to check if shield is there
 			}
 		}
@@ -1222,10 +1256,12 @@ public class GameView {
 				for(int i=0;i<wall2_display.length;i++) {
 					if(wall2_display[i].getLayoutY() > 0 && wall2_display[i].getLayoutY() < 800  ) {
 						updatePoints(Integer.parseInt(wall2_values[i].getText()));
+						//positionBurst(wall2_display[i].getLayoutX(), wall2_display[i].getLayoutY());
 						wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() - 800);
 						wall2_values[i].setLayoutY(wall2_values[i].getLayoutY() -  800);
 					}
 				}
+				positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
 			}
 		}
 		if(ball_display!=null) {
@@ -1233,8 +1269,10 @@ public class GameView {
 				//setPosition(ball_display);
 				//get ball number;
 				ball_display.setLayoutY(900);
+				ball_value.setLayoutY(900);
+				snake.setlen(Integer.parseInt(ball_value.getText()));
+				gamePane.getChildren().remove(ball_value);
 				gamePane.getChildren().remove(ball_display);
-				snake.setlen(1); 
 			}
 		}
 		
@@ -1248,6 +1286,61 @@ public class GameView {
 	private void updatePoints(int i) {
 		points+=i;
 		points_label.setText(Integer.toString(points));
+	}
+	
+	private void Animation(int x, int y) {
+		burst = new Burst_Anim(x, y);
+		
+		gamePane.getChildren().add(burst.c1);
+		gamePane.getChildren().add(burst.c2);
+		gamePane.getChildren().add(burst.c3);
+		gamePane.getChildren().add(burst.c4);
+		gamePane.getChildren().add(burst.c5);
+		gamePane.getChildren().add(burst.c6);
+		gamePane.getChildren().add(burst.c7);
+	}
+	
+	private void moveCircles() {
+		burst.c1.setLayoutY(burst.c1.getLayoutY() - 15);
+		
+		burst.c2.setLayoutX(burst.c2.getLayoutX() - 12);
+		
+		burst.c3.setLayoutY(burst.c3.getLayoutY() + 13);
+		
+		burst.c4.setLayoutX(burst.c4.getLayoutX() - 10);
+		burst.c4.setLayoutY(burst.c4.getLayoutY() + 8);
+		
+		burst.c5.setLayoutX(burst.c5.getLayoutX() + 7);
+		burst.c5.setLayoutY(burst.c5.getLayoutY() + 10);
+		
+		burst.c6.setLayoutX(burst.c6.getLayoutX() - 10);
+		burst.c6.setLayoutY(burst.c6.getLayoutY() - 7);
+		
+		burst.c7.setLayoutX(burst.c7.getLayoutX() + 8);
+		burst.c7.setLayoutY(burst.c7.getLayoutY() - 10);
+	}
+	
+	private void positionBurst(double x, double y) {
+		burst.c1.setLayoutX(x);
+		burst.c1.setLayoutY(y);
+		
+		burst.c2.setLayoutX(x);
+		burst.c2.setLayoutY(y);
+		
+		burst.c3.setLayoutX(x);
+		burst.c3.setLayoutY(y);
+		
+		burst.c4.setLayoutX(x);
+		burst.c4.setLayoutY(y);
+		
+		burst.c5.setLayoutX(x);
+		burst.c5.setLayoutY(y);
+		
+		burst.c6.setLayoutX(x);
+		burst.c6.setLayoutY(y);
+		
+		burst.c7.setLayoutX(x);
+		burst.c7.setLayoutY(y);
 	}
 	
 }
