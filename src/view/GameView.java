@@ -831,7 +831,7 @@ public class GameView {
 		createWall2(wall2,-(game_height + game_height/2));
 	}
 	private void createWall1(Wall wall1, int Y) {
-		wall1 = new Wall();
+		wall1 = new Wall(snake.getlen()+1);
 		Y = Y +200;
 		for(int i=0; i<8; i++) {
 			if(wall1.block_appear[i]==true) {
@@ -852,7 +852,7 @@ public class GameView {
 		}
 	}
 	private void createWall2(Wall wall2, int Y) {
-		wall2 = new Wall();
+		wall2 = new Wall(snake.getlen()+1);
 		Y = Y+200;
 		for(int i=0; i<8; i++) {
 			if(wall2.block_appear[i]==true) {
@@ -1175,17 +1175,23 @@ private void moveSnake() {
 		for(int i=0; i<wall2_display.length; i++) {
 			if(wall2_display[i]!=null) {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall2_display[i].getLayoutX()+75/2, wall2_display[i].getLayoutY()+75/2) ) {
-					if(wall2_display[i].isVisible()) {
-						wall2_display[i].setLayoutY(-1000);
-						updatePoints(Integer.parseInt(wall2_values[i].getText()));
-						if(!has_shield) {
-							snake.setlen(-Integer.parseInt(wall2_values[i].getText()));
-						}
-						gamePane.getChildren().remove(wall2_display[i]);
-						gamePane.getChildren().remove(wall2_values[i]);
-						//System.out.println("hello");
+					if(wall2_display[i].isVisible() && gamePane.getChildren().contains(wall2_display[i])) {
 						
-						positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
+						if(Integer.parseInt(wall2_values[i].getText())>5) {
+							gameTimer.stop();
+						}
+						else {
+							wall2_display[i].setLayoutY(-1000);
+							updatePoints(Integer.parseInt(wall2_values[i].getText()));
+							if(!has_shield) {
+								snake.setlen(-Integer.parseInt(wall2_values[i].getText()));
+							}
+							gamePane.getChildren().remove(wall2_display[i]);
+							gamePane.getChildren().remove(wall2_values[i]);
+							//System.out.println("hello");
+							
+							positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
+						}
 					}
 					//setPosition(wall2_display[i]);
 				}
@@ -1195,7 +1201,7 @@ private void moveSnake() {
 		for(int i=0; i<wall1_display.length; i++) {
 			if(wall1_display[i]!=null) {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall1_display[i].getLayoutX()+75/2, wall1_display[i].getLayoutY()+75/2) ) {
-					if(wall1_display[i].isVisible()) {
+					if(wall1_display[i].isVisible() && gamePane.getChildren().contains(wall1_display[i])) {
 						wall1_display[i].setLayoutY(-1000);
 						updatePoints(Integer.parseInt(wall1_values[i].getText()));
 						if(!has_shield) {
