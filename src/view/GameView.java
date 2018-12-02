@@ -53,6 +53,8 @@ public class GameView {
 	
 	private Text[] wall1_values;
 	private Text[] wall2_values;
+	private Text snake_value;
+	private Text ball_value;
 	
 	private GridPane gridPane1;
 	private GridPane gridPane2;
@@ -141,6 +143,8 @@ public class GameView {
 		wall2_display = new ImageView[8];
 		wall1_values = new Text[8];
 		wall2_values = new Text[8];
+		snake_value = new Text();
+		ball_value = new Text();
 		for(int i=0;i<8;i++) {
 			wall1_display[i] = new ImageView();
 			wall2_display[i] = new ImageView();
@@ -684,6 +688,14 @@ public class GameView {
 			ball_display.setLayoutX(60*rand.nextInt(10));
 			gamePane.getChildren().add(ball_display);
 		}
+		Random rand = new Random();
+		ball_value = new Text(Integer.toString(rand.nextInt(4)+1));
+		ball_value.setFill(Color.WHITE);
+		ball_value.setStyle("-fx-font: 10 Helvetica;");
+		ball_value.setLayoutX(ball_display.getLayoutX() + 7);
+		ball_value.setLayoutY(ball_display.getLayoutY() + 13);
+		gamePane.getChildren().add(ball_value);
+		
 	}
     private void loadBall(Ball ball) {
 		if(ball.block_appear==true) {
@@ -699,6 +711,7 @@ public class GameView {
 	
 		if(ball_display!=null) {
 			ball_display.setLayoutY(ball_display.getLayoutY() + 5);
+			ball_value.setLayoutY(ball_value.getLayoutY() + 5);
 			//System.out.println(ball_display.getLayoutY() + " " + ball_display.isVisible());
 			ball_y =ball_display.getLayoutY();
 		}
@@ -985,6 +998,12 @@ public class GameView {
 		snake_display.setLayoutX(game_width/2);
 		snake_display.setLayoutY(game_height - 200);
 		gamePane.getChildren().add(snake_display);
+		snake_value = new Text(Integer.toString(snake.getlen())+1);
+		snake_value.setFill(Color.WHITE);
+		snake_value.setStyle("-fx-font: 10 Helvetica;");
+		snake_value.setLayoutX(game_width/2 + 7);
+		snake_value.setLayoutY(game_height - 200 + 13);
+		gamePane.getChildren().add(snake_value);
 	}
 	private void moveSnake() {
 		
@@ -1016,10 +1035,12 @@ public class GameView {
 					}
 					if(!close_check) {
 						snake_display.setLayoutX(snake_display.getLayoutX() - 10);
+						snake_value.setLayoutX(snake_value.getLayoutX() - 10);
 					}
 				}
 				else {
 					snake_display.setLayoutX(snake_display.getLayoutX() - 10);
+					snake_value.setLayoutX(snake_value.getLayoutX() - 10);
 				}
 				//System.out.println(" snake_display x is - - " + snake_display.getLayoutX() );
 				/*for(int i=0;i<snake_tail.size();i++) {
@@ -1040,18 +1061,16 @@ public class GameView {
 					}
 					if(!close_check) {
 						snake_display.setLayoutX(snake_display.getLayoutX() + 10);
+						snake_value.setLayoutX(snake_value.getLayoutX() + 10);
 					} 
 				}
 				else {
 					snake_display.setLayoutX(snake_display.getLayoutX() + 10);
+					snake_value.setLayoutX(snake_value.getLayoutX() + 10);
 				}
-				//System.out.println(" snakedisplay x is - - " + snake_display.getLayoutX());
-				/*for(int i=0;i<snake_tail.size();i++) {
-					snake_tail.get(i).setX(snake_display.getX());
-				}*/
 			}
 		}
-		
+		snake_value.setText(Integer.toString(snake_tail.size()+1));
 		for(int i=0;i<snake_tail.size();i++) {
 			snake_tail.get(i).setLayoutX(snake_display.getLayoutX());
 			snake_tail.get(i).setLayoutY(snake_display.getLayoutY()+ (i+1)*20);
@@ -1064,7 +1083,8 @@ public class GameView {
 			gamePane.getChildren().add(snake_tail.get(i));
 		}
 		gamePane.getChildren().add(snake_display);
-		
+		gamePane.getChildren().remove(snake_value);
+		gamePane.getChildren().add(snake_value);
 	}	
 	private void setsnaketail() {
 		int x = snake.getlen();
@@ -1112,7 +1132,7 @@ public class GameView {
 				moveBarricade();
 				collisionHandling();
 				//System.out.print(snake.getlen() + " x is - " + snake_display.getLayoutX() + " y is -" + snake_display.getLayoutY() + " hi " +snake_tail.size() + "  :::: ");
-				System.out.println(magnet_time + " hsjvdsv" + shield_time + " sss " + gridPane1.getLayoutY() + " ll " +wall1_display[1].getLayoutY() + " hello " + wall2_display[1].getLayoutY() );
+				System.out.println(ball_value.getText() + " " + ball_value.getLayoutY() + " " + snake_value.getLayoutY() + magnet_time + " hsjvdsv" + shield_time + " sss " + gridPane1.getLayoutY() + " ll " +wall1_display[1].getLayoutY() + " hello " + wall2_display[1].getLayoutY() );
 			}
 		};
 		
@@ -1233,8 +1253,11 @@ public class GameView {
 				//setPosition(ball_display);
 				//get ball number;
 				ball_display.setLayoutY(900);
+				ball_value.setLayoutY(900);
+				snake.setlen(Integer.parseInt(ball_value.getText()));
+				gamePane.getChildren().remove(ball_value);
 				gamePane.getChildren().remove(ball_display);
-				snake.setlen(1); 
+				
 			}
 		}
 		
