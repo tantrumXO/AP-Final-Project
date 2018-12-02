@@ -528,7 +528,7 @@ public class GameView  implements Control_Function{
 	 * @param coin a coin instance
 	 * @param y value of y coordinate for coin
 	 */
-	private void createCoin(Coin coin , int y ) {
+	public void createCoin(Coin coin , int y ) {
 		coin = new Coin();
 		if(coin.block_appear==true) {
 			coin_display = new ImageView(coin.block_path);
@@ -542,7 +542,7 @@ public class GameView  implements Control_Function{
 	 * loads a coin
 	 * @param coin
 	 */
-	private void loadCoin(Coin coin) {
+	public void loadCoin(Coin coin) {
 		if(coin.block_appear==true) {
 			coin_display = new ImageView(coin.block_path);
 			coin_display.setLayoutY(coin.gety());
@@ -608,7 +608,7 @@ public class GameView  implements Control_Function{
 	 * @param magnet a magnet instance
 	 * @param y value of y coordinate for magnet
 	 */
-    private void createMagnet(Magnet magnet , int y ) {
+    public void createMagnet(Magnet magnet , int y ) {
 		magnet = new Magnet();
 		if(magnet.block_appear==true) {
 			magnet_display = new ImageView(magnet.block_path);
@@ -622,7 +622,7 @@ public class GameView  implements Control_Function{
 	 * loads a magnet
 	 * @param magnet
 	 */
-    private void loadMagnet( Magnet magnet) {
+    public void loadMagnet( Magnet magnet) {
 		if(magnet.block_appear==true) {
 			magnet_display = new ImageView(magnet.block_path);
 			magnet_display.setLayoutY(magnet.gety());
@@ -706,7 +706,7 @@ public class GameView  implements Control_Function{
 	 * @param shield a shield instance
 	 * @param y value of y coordinate for shield
 	 */
-    private void createShield(Shield shield , int y ) {
+    public void createShield(Shield shield , int y ) {
 		shield = new Shield();
 		if(shield.block_appear==true) {
 			shield_display = new ImageView(shield.block_path);
@@ -816,7 +816,7 @@ public class GameView  implements Control_Function{
 	 * loads a destroy_blocks
 	 * @param destroy_blocks
 	 */
-	private void loadDestroy_Blocks(Destroy_Blocks destroy_blocks) {
+	public void loadDestroy_Blocks(Destroy_Blocks destroy_blocks) {
 		if(destroy_blocks.block_appear==true) {
 			destroy_blocks_display = new ImageView(destroy_blocks.block_path);
 			destroy_blocks_display.setLayoutY(destroy_blocks.gety());
@@ -883,7 +883,7 @@ public class GameView  implements Control_Function{
 	 * @param ball a ball instance
 	 * @param y value of y coordinate for ball
 	 */
-    private void createBall(Ball ball , int y ) {
+    public void createBall(Ball ball , int y ) {
 		ball = new Ball();
 		if(ball.block_appear==true) {
 			ball_display = new ImageView(ball.block_path);
@@ -904,7 +904,7 @@ public class GameView  implements Control_Function{
 	 * loads a ball
 	 * @param ball
 	 */
-    private void loadBall(Ball ball) {
+    public void loadBall(Ball ball) {
 		if(ball.block_appear==true) {
 			ball_display = new ImageView(ball.block_path);
 			ball_display.setLayoutY(ball.gety());
@@ -921,7 +921,7 @@ public class GameView  implements Control_Function{
     /**
 	 * this function simulates the movement of ball
 	 */
-    private void moveBall() {
+    public void moveBall() {
 		
 		double ball_y = 0;
 	
@@ -980,7 +980,7 @@ public class GameView  implements Control_Function{
 	 * @param barricades a barricades instance
 	 * @param y value of y coordinate for barricades
 	 */
-    private void createBarricade(Barricade barricade , int y ) {
+    public void createBarricade(Barricade barricade , int y ) {
     	
 		for(int i=0; i<barricade_display.length; i++) {
 			barricade = new Barricade();
@@ -995,7 +995,7 @@ public class GameView  implements Control_Function{
 	 * loads a barricade
 	 * @param barricade
 	 */
-    private void loadBarricade(Barricade barricade) {
+    public void loadBarricade(Barricade barricade) {
 		if(barricade.block_appear==true) {
 			barricade_display[0].setLayoutX(barricade.getX0());
 			barricade_display[0].setLayoutY(barricade.getY0());
@@ -1077,7 +1077,7 @@ public class GameView  implements Control_Function{
 	/**
 	 *  a function to create 2 initial walls
 	 */
-	private void createInitWall() {
+	public void createInitWall() {
 		createWall1(wall1,-(game_height/2));
 		createWall2(wall2,-(game_height + game_height/2));
 	}
@@ -1086,7 +1086,7 @@ public class GameView  implements Control_Function{
 	 * @param wall1
 	 * @param Y
 	 */
-	private void createWall1(Wall wall1, int Y) {
+	public void createWall1(Wall wall1, int Y) {
 		wall1 = new Wall(snake.getlen()+1);
 		Y = Y +200;
 		for(int i=0; i<8; i++) {
@@ -1112,7 +1112,7 @@ public class GameView  implements Control_Function{
 	 * @param wall2
 	 * @param Y
 	 */
-	private void createWall2(Wall wall2, int Y) {
+	public void createWall2(Wall wall2, int Y) {
 		wall2 = new Wall(snake.getlen()+1);
 		Y = Y+200;
 		for(int i=0; i<8; i++) {
@@ -1137,7 +1137,7 @@ public class GameView  implements Control_Function{
 	 * @param wall1
 	 * @param wall2
 	 */
-	private void loadWall(Wall wall1, Wall wall2) {
+	public void loadWall(Wall wall1, Wall wall2) {
 		for(int i=0; i<8; i++) {
 			if(wall1.block_appear[i]==true) {
 				wall1_display[i] = new ImageView(wall1.block_path[i]);
@@ -1172,7 +1172,7 @@ public class GameView  implements Control_Function{
 	/**
 	 * this function simulates the movement of walls
 	 */
-	private void moveWall() {
+	public void moveWall() {
 		
 		double wall1_y = 0;
 		double wall2_y = 0;
@@ -1305,7 +1305,7 @@ public class GameView  implements Control_Function{
 	/**
 	 *  create a snake instance from Snake class
 	 */
-	private void createSnake() {
+	public void createSnake() {
 		snake = new Snake();
 		snake_display = new ImageView("resources/ball.png");
 		snake_display.setLayoutX(game_width/2);
@@ -1321,7 +1321,7 @@ public class GameView  implements Control_Function{
 	/**
 	 * moves the snake
 	 */
-	private void moveSnake() {
+	public void moveSnake() {
 		
 		ArrayList<Integer> left = new ArrayList<>();
 		ArrayList<Integer> right = new ArrayList<>();
@@ -1405,7 +1405,7 @@ public class GameView  implements Control_Function{
 	/**
 	 * sets the snake tail dynamically during the game
 	 */
-	private void setsnaketail() {
+	public void setsnaketail() {
 		int x = snake.getlen();
 		if(snake_tail==null) {
 			snake_tail = new ArrayList<ImageView>();
@@ -1438,7 +1438,7 @@ public class GameView  implements Control_Function{
 	/**
 	 * creates a game loop
 	 */
-	private void createGameLoop() {
+	public void createGameLoop() {
 		long startTime = System.currentTimeMillis();
 		gameTimer = new AnimationTimer() {
 			@Override
@@ -1478,7 +1478,7 @@ public class GameView  implements Control_Function{
 	/**
 	 * sets speed of the game
 	 */
-	private void setSpeed() {
+	public void setSpeed() {
 		if(snake.getlen()<10) {
 			game_speed = 5;
 		}
@@ -1496,7 +1496,7 @@ public class GameView  implements Control_Function{
 	/**
 	 * creates a background
 	 */
-	private void createBackground() {
+	public void createBackground() {
 		gridPane1 = new GridPane();
 		gridPane2 = new GridPane();
 		
@@ -1514,7 +1514,7 @@ public class GameView  implements Control_Function{
 	/**
 	 * moves background
 	 */
-	private void moveBackground() {
+	public void moveBackground() {
 		gridPane1.setLayoutY(gridPane1.getLayoutY() + 1);
 		gridPane2.setLayoutY(gridPane2.getLayoutY() + 1);
 		
@@ -1530,7 +1530,7 @@ public class GameView  implements Control_Function{
 	 * handles collision
 	 * @throws InterruptedException
 	 */
-	private void collisionHandling() throws InterruptedException {
+	public void collisionHandling() throws InterruptedException {
 		for(int i=0; i<wall2_display.length; i++) {
 			if(wall2_display[i]!=null) {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall2_display[i].getLayoutX()+75/2, wall2_display[i].getLayoutY()+75/2) ) {
@@ -1651,7 +1651,7 @@ public class GameView  implements Control_Function{
 	 * @param y2
 	 * @return
 	 */
-	private double calcDist(double x1, double y1, double x2, double y2) {
+	public double calcDist(double x1, double y1, double x2, double y2) {
 		return Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2));
 	}
 	
