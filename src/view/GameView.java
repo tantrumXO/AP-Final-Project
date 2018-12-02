@@ -1152,13 +1152,14 @@ public class GameView {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall2_display[i].getLayoutX()+75/2, wall2_display[i].getLayoutY()+75/2) ) {
 					//setPosition(wall2_display[i]);
 					wall2_display[i].setLayoutY(-1000);
+					updatePoints(Integer.parseInt(wall2_values[i].getText()));
 					if(!has_shield) {
 						snake.setlen(-Integer.parseInt(wall2_values[i].getText()));
 					}
 					gamePane.getChildren().remove(wall2_display[i]);
 					gamePane.getChildren().remove(wall2_values[i]);
 					//System.out.println("hello");
-					updatePoints(1);
+					
 				}
 			}
 		}
@@ -1168,13 +1169,13 @@ public class GameView {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall1_display[i].getLayoutX()+75/2, wall1_display[i].getLayoutY()+75/2) ) {
 					//setPosition(wall1_display[i]);
 					wall1_display[i].setLayoutY(-1000);
+					updatePoints(Integer.parseInt(wall1_values[i].getText()));
 					if(!has_shield) {
 						snake.setlen(-Integer.parseInt(wall1_values[i].getText()));
 					}
 					gamePane.getChildren().remove(wall1_display[i]);
 					gamePane.getChildren().remove(wall1_values[i]);
 					//System.out.println("hello");
-					updatePoints(1);
 				}
 			}
 		}
