@@ -5,8 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import assets.Ball;
 import assets.Barricade;
@@ -14,9 +17,11 @@ import assets.Burst_Anim;
 import assets.Coin;
 import assets.Destroy_Blocks;
 import assets.Magnet;
+import assets.Player;
 import assets.Shield;
 import assets.Snake;
 import assets.SnakeButton;
+import assets.TopPlayers;
 import assets.Wall;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
@@ -38,10 +43,11 @@ public class GameView {
 	private AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
-	
+	private int game_speed;
+	private Player player;
 	private static final int game_height = 800;
 	private static final int game_width = 600;
-	
+	private TopPlayers topplayers;
 	private Stage menuStage;
 	private Snake snake;
 	private ImageView snake_display;
@@ -54,6 +60,7 @@ public class GameView {
 	private boolean rightKeyPressed;
 	private boolean paused;
 	private AnimationTimer gameTimer;
+	private AnimationTimer woahTimer;
 	
 	private Text[] wall1_values;
 	private Text[] wall2_values;
@@ -82,6 +89,7 @@ public class GameView {
 	private Barricade barricade;
 	private ImageView[] barricade_display;
 	private SnakeButton backButton;
+	private SnakeButton restartButton;
 	private Random randomPosGen;
 	private Label points_label;
 	private int points = 0;
@@ -89,8 +97,11 @@ public class GameView {
 	private static int coin_edge = 20;
 	private final static int wall_edge = 75/2+10;
 	private Burst_Anim burst;
+	private Stage mainStage;
 	
-	public GameView() {
+	public GameView(Stage mainStage) {
+		game_speed = 5;
+		this.mainStage = mainStage;
 		initializeStage();
 		createKeyListeners();
 		randomPosGen = new Random();
@@ -111,11 +122,13 @@ public class GameView {
 						paused = false;
 						gameTimer.start();
 						backButton.setVisible(false);
+						restartButton.setVisible(false);
 					}
 					else {
 						paused = true;
 						gameTimer.stop();
 						backButton.setVisible(true);
+						restartButton.setVisible(true);
 					}
 				}
 			}
@@ -142,6 +155,8 @@ public class GameView {
 		gameStage.setResizable(false);
 		gameStage.initStyle(StageStyle.UNDECORATED);
 		gameStage.setTitle("Snake VS Blocks");
+		player = new Player();
+		topplayers = new TopPlayers();
 		wall1_display = new ImageView[8];
 		wall2_display = new ImageView[8];
 		wall1_values = new Text[8];
@@ -170,6 +185,13 @@ public class GameView {
 		destroy_blocks = new Destroy_Blocks();
 		
 		burst = new Burst_Anim(300,300);
+		try {
+			topplayers = deserialize_topplayer();
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	public void createNewGame(Stage menuStage) {
 		this.menuStage = menuStage;
@@ -196,6 +218,17 @@ public class GameView {
 		gamePane.getChildren().add(points_label);
 		
 		backButton = new SnakeButton("QUIT");
+		restartButton = new SnakeButton("RESTART");
+		
+		restartButton.setOnAction(new EventHandler<ActionEvent>( ) {
+			@Override
+			public void handle(ActionEvent event) {
+				GameView gameManager = new GameView(mainStage);
+				gameManager.createNewGame(mainStage);
+				gameStage.close();
+			}
+		});
+		
 		backButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -220,7 +253,8 @@ public class GameView {
 					
 					ball.sety(ball_display.getLayoutY());
 					ball.setx(ball_display.getLayoutX());
-					
+					ball.setValue(Integer.parseInt(ball_value.getText()));
+					serialize_ball(ball);
 					
 					barricade.setX0(barricade_display[0].getLayoutX());
 					barricade.setY0(barricade_display[0].getLayoutY());
@@ -244,9 +278,8 @@ public class GameView {
 					barricade.setY9(barricade_display[9].getLayoutY());
 					serialize_barricade(barricade);
 					
-					ball.sety(ball_display.getLayoutY());
-					ball.setx(ball_display.getLayoutX());
-					serialize_ball(ball);
+					
+					
 					
 					wall1.sety(wall1_display[0].getLayoutY());
 					serialize_wall1(wall1);
@@ -265,9 +298,15 @@ public class GameView {
 		gamePane.getChildren().add(backButton);
 		backButton.setVisible(false);
 		
+		restartButton.setLayoutX(380);
+		restartButton.setLayoutY(45);
+		gamePane.getChildren().add(restartButton);
+		restartButton.setVisible(false);
+		
 		gameStage.show();
 	}
 	public void LoadSavedGame(Stage menuStage) throws ClassNotFoundException, IOException {
+		
 		coin = deserialize_coin();
 		coin_display.setLayoutX(coin.getx());
 		coin_display.setLayoutY(coin.gety());
@@ -285,6 +324,7 @@ public class GameView {
 		destroy_blocks_display.setLayoutY(destroy_blocks.gety());
 		
 		ball = deserialize_ball();
+		ball_value = new Text(Integer.toString(ball.getValue()));
 		ball_display.setLayoutX(ball.getx());
 		ball_display.setLayoutY(ball.gety());
 		
@@ -317,6 +357,7 @@ public class GameView {
 		for(int i=0;i<8;i++) {
 			wall1_display[i].setLayoutX(75*(i));
 			wall1_display[i].setLayoutY(wall1.gety());
+			
 		}
 		wall2 = deserialize_wall2();
 		for(int i=0;i<8;i++) {
@@ -334,9 +375,10 @@ public class GameView {
 		loadShield(shield);
 		loadDestroy_Blocks(destroy_blocks);
 		loadBall(ball);
-		createBarricade(barricade,-100);
 		loadBarricade(barricade);
 		createGameLoop();
+		Animation(300,400);
+		
 		
 		points_label = new Label();
 		points_label.setText(Integer.toString(points));
@@ -347,6 +389,17 @@ public class GameView {
 		gamePane.getChildren().add(points_label);
 		
 		backButton = new SnakeButton("QUIT");
+		restartButton = new SnakeButton("RESTART");
+		
+		restartButton.setOnAction(new EventHandler<ActionEvent>( ) {
+			@Override
+			public void handle(ActionEvent event) {
+				GameView gameManager = new GameView(mainStage);
+				gameManager.createNewGame(mainStage);
+				gameStage.close();
+			}
+		});
+		
 		backButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -357,27 +410,23 @@ public class GameView {
 					coin.setx(coin_display.getLayoutX());
 					serialize_coin(coin);
 					
-					
 					magnet.sety(magnet_display.getLayoutY());
 					magnet.setx(magnet_display.getLayoutX());
 					serialize_magnet(magnet);
-					
 					
 					shield.sety(shield_display.getLayoutY());
 					shield.setx(shield_display.getLayoutX());
 					serialize_shield(shield);
 					
-					
 					destroy_blocks.sety(destroy_blocks_display.getLayoutY());
 					destroy_blocks.setx(destroy_blocks_display.getLayoutX());
 					serialize_destroy_blocks(destroy_blocks);
 					
-					
 					ball.sety(ball_display.getLayoutY());
 					ball.setx(ball_display.getLayoutX());
+					ball.setValue(Integer.parseInt(ball_value.getText()));
 					serialize_ball(ball);
 					
-
 					barricade.setX0(barricade_display[0].getLayoutX());
 					barricade.setY0(barricade_display[0].getLayoutY());
 					barricade.setX1(barricade_display[1].getLayoutX());
@@ -401,9 +450,10 @@ public class GameView {
 					serialize_barricade(barricade);
 					
 					
+					
+					
 					wall1.sety(wall1_display[0].getLayoutY());
 					serialize_wall1(wall1);
-					
 					wall2.sety(wall2_display[0].getLayoutY());
 					serialize_wall2(wall2);
 					
@@ -418,6 +468,11 @@ public class GameView {
 		backButton.setLayoutY(45);
 		gamePane.getChildren().add(backButton);
 		backButton.setVisible(false);
+		
+		restartButton.setLayoutX(380);
+		restartButton.setLayoutY(45);
+		gamePane.getChildren().add(restartButton);
+		restartButton.setVisible(false);
 		
 		gameStage.show();
 	}
@@ -445,7 +500,7 @@ public class GameView {
 		double coin_y = 0;
 	
 		if(coin_display!=null) {
-			coin_display.setLayoutY(coin_display.getLayoutY() + 5);
+			coin_display.setLayoutY(coin_display.getLayoutY() + game_speed);
 			coin_y =coin_display.getLayoutY();
 		}
 	
@@ -503,7 +558,7 @@ public class GameView {
 		double magnet_y = 0;
 	
 		if(magnet_display!=null) {
-			magnet_display.setLayoutY(magnet_display.getLayoutY() + 5);
+			magnet_display.setLayoutY(magnet_display.getLayoutY() + game_speed);
 			//System.out.println(magnet_display.getLayoutY() + " " + magnet_display.isVisible());
 			magnet_y =magnet_display.getLayoutY();
 		}
@@ -577,7 +632,7 @@ public class GameView {
 		double shield_y = 0;
 	
 		if(shield_display!=null) {
-			shield_display.setLayoutY(shield_display.getLayoutY() + 5);
+			shield_display.setLayoutY(shield_display.getLayoutY() + game_speed);
 			//System.out.println(shield_display.getLayoutY() + " " + shield_display.isVisible());
 			shield_y =shield_display.getLayoutY();
 		}
@@ -647,7 +702,7 @@ public class GameView {
 		double destroy_blocks_y = 0;
 	
 		if(destroy_blocks_display!=null) {
-			destroy_blocks_display.setLayoutY(destroy_blocks_display.getLayoutY() + 5);
+			destroy_blocks_display.setLayoutY(destroy_blocks_display.getLayoutY() + game_speed);
 			//System.out.println(destroy_blocks_display.getLayoutY() + " " + destroy_blocks_display.isVisible());
 			destroy_blocks_y =destroy_blocks_display.getLayoutY();
 		}
@@ -707,14 +762,20 @@ public class GameView {
 			ball_display.setLayoutX(ball.getx());
 			gamePane.getChildren().add(ball_display);
 		}
+		ball_value = new Text(Integer.toString(ball.getValue()));
+		ball_value.setFill(Color.WHITE);
+		ball_value.setStyle("-fx-font: 10 Helvetica;");
+		ball_value.setLayoutX(ball_display.getLayoutX() + 7);
+		ball_value.setLayoutY(ball_display.getLayoutY() + 13);
+		gamePane.getChildren().add(ball_value);
 	}
     private void moveBall() {
 		
 		double ball_y = 0;
 	
 		if(ball_display!=null) {
-			ball_display.setLayoutY(ball_display.getLayoutY() + 5);
-			ball_value.setLayoutY(ball_value.getLayoutY() + 5);
+			ball_display.setLayoutY(ball_display.getLayoutY() + game_speed);
+			ball_value.setLayoutY(ball_value.getLayoutY() + game_speed);
 			//System.out.println(ball_display.getLayoutY() + " " + ball_display.isVisible());
 			ball_y =ball_display.getLayoutY();
 		}
@@ -783,15 +844,15 @@ public class GameView {
 			barricade_display[8].setLayoutY(barricade.getY8());
 			barricade_display[9].setLayoutX(barricade.getX9());
 			barricade_display[9].setLayoutY(barricade.getY9());
-			/*for(int i=0;i<10;i++) {
+			for(int i=0;i<10;i++) {
 				gamePane.getChildren().add(barricade_display[i]);
-			}*/	
+			}
 		}
 	}
 	private void moveBarricade() {
 		
 		for(int i=0; i<barricade_display.length; i++) {
-			barricade_display[i].setLayoutY(barricade_display[i].getLayoutY()+5);
+			barricade_display[i].setLayoutY(barricade_display[i].getLayoutY()+game_speed);
 		}
 		
 		for(int i=0; i<barricade_display.length; i++) {
@@ -878,6 +939,13 @@ public class GameView {
 				wall1_display[i].setLayoutY(wall1.gety());
 				wall1_display[i].setLayoutX(75*(i));
 				gamePane.getChildren().add(wall1_display[i]);
+				
+				wall1_values[i] = new Text(Integer.toString(wall1.values[i]));
+				wall1_values[i].setFill(Color.WHITE);
+				wall1_values[i].setStyle("-fx-font: 16 Helvetica;");
+				wall1_values[i].setLayoutY(wall1_display[i].getLayoutY()+75/2);
+				wall1_values[i].setLayoutX(75*i + 75/2);
+				gamePane.getChildren().add(wall1_values[i]);
 			}
 		}
 		for(int i=0; i<8; i++) {
@@ -886,6 +954,13 @@ public class GameView {
 				wall2_display[i].setLayoutY(wall2.gety());
 				wall2_display[i].setLayoutX(75*(i));
 				gamePane.getChildren().add(wall2_display[i]);
+				
+				wall2_values[i] = new Text(Integer.toString(wall2.values[i]));
+				wall2_values[i].setFill(Color.WHITE);
+				wall2_values[i].setStyle("-fx-font: 16 Helvetica;");
+				wall2_values[i].setLayoutY(wall2_display[i].getLayoutY()+75/2);
+				wall2_values[i].setLayoutX(75*i + 75/2);
+				gamePane.getChildren().add(wall2_values[i]);
 			}
 		}
 	}
@@ -913,8 +988,8 @@ public class GameView {
 		
 		for(int i=0; i<8; i++) {
 			if(wall1_display[i]!=null) {
-				wall1_display[i].setLayoutY(wall1_display[i].getLayoutY() + 5);
-				wall1_values[i].setLayoutY(wall1_values[i].getLayoutY() + 5);
+				wall1_display[i].setLayoutY(wall1_display[i].getLayoutY() + game_speed);
+				wall1_values[i].setLayoutY(wall1_values[i].getLayoutY() + game_speed);
 				//System.out.print(wall1_display[i].getLayoutY() + " " );
 				wall1_y = wall1_display[i].getLayoutY();
 			}
@@ -922,8 +997,8 @@ public class GameView {
 		//System.out.println();
 		for(int i=0; i<8; i++) {
 			if(wall2_display[i]!=null) {
-				wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() + 5);
-				wall2_values[i].setLayoutY(wall2_values[i].getLayoutY() + 5);
+				wall2_display[i].setLayoutY(wall2_display[i].getLayoutY() + game_speed);
+				wall2_values[i].setLayoutY(wall2_values[i].getLayoutY() + game_speed);
 				wall2_y = wall2_display[i].getLayoutY();
 			}
 		}
@@ -1001,14 +1076,14 @@ public class GameView {
 		snake_display.setLayoutX(game_width/2);
 		snake_display.setLayoutY(game_height - 200);
 		gamePane.getChildren().add(snake_display);
-		snake_value = new Text(Integer.toString(snake.getlen())+1);
+		snake_value = new Text(Integer.toString(snake.getlen()));
 		snake_value.setFill(Color.WHITE);
 		snake_value.setStyle("-fx-font: 10 Helvetica;");
 		snake_value.setLayoutX(game_width/2 + 7);
 		snake_value.setLayoutY(game_height - 200 + 13);
 		gamePane.getChildren().add(snake_value);
 	}
-private void moveSnake() {
+	private void moveSnake() {
 		
 		ArrayList<Integer> left = new ArrayList<>();
 		ArrayList<Integer> right = new ArrayList<>();
@@ -1098,7 +1173,7 @@ private void moveSnake() {
 			return;
 		}
 		else if(snake_tail.size() > x) {
-			while(snake_tail.size() > x) {
+			while(snake_tail.size() > x && snake_tail.size()>0) {
 				gamePane.getChildren().remove(snake_tail.get(snake_tail.size()-1));
 				snake_tail.remove(snake_tail.size()-1);
 			}
@@ -1124,6 +1199,13 @@ private void moveSnake() {
 		gameTimer = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
+				setSpeed();
+				try {
+					checkEnd();
+				} catch (IOException | ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				moveBackground();
 				moveWall();
 				moveSnake();
@@ -1135,13 +1217,33 @@ private void moveSnake() {
 				moveBall();
 				moveBarricade();
 				moveCircles();
-				collisionHandling();
+				try {
+					collisionHandling();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				//System.out.print(snake.getlen() + " x is - " + snake_display.getLayoutX() + " y is -" + snake_display.getLayoutY() + " hi " +snake_tail.size() + "  :::: ");
 				//System.out.println(magnet_time + " hsjvdsv" + shield_time + " sss " + gridPane1.getLayoutY() + " ll " +wall1_display[1].getLayoutY() + " hello " + wall2_display[1].getLayoutY() );
 			}
 		};
 		
 		gameTimer.start();
+	}
+	
+	private void setSpeed() {
+		if(snake.getlen()<10) {
+			game_speed = 5;
+		}
+		else if(snake.getlen()<15) {
+			game_speed = 7;
+		}
+		else if(snake.getlen()<20) {
+			game_speed = 10;
+		}
+		else {
+			game_speed = 15;
+		}
 	}
 	
 	private void createBackground() {
@@ -1170,28 +1272,24 @@ private void moveSnake() {
 		}
 	}
 	
-	private void collisionHandling() {
-		
+	private void collisionHandling() throws InterruptedException {
 		for(int i=0; i<wall2_display.length; i++) {
 			if(wall2_display[i]!=null) {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall2_display[i].getLayoutX()+75/2, wall2_display[i].getLayoutY()+75/2) ) {
 					if(wall2_display[i].isVisible() && gamePane.getChildren().contains(wall2_display[i])) {
+						wall2_display[i].setLayoutY(-1000);
 						
-						if(Integer.parseInt(wall2_values[i].getText())>5) {
-							gameTimer.stop();
+						
+						updatePoints(Math.min(Integer.parseInt(wall2_values[i].getText()),snake.getlen()+1));
+						
+						if(!has_shield) {
+							snake.setlen(-Integer.parseInt(wall2_values[i].getText()));
 						}
-						else {
-							wall2_display[i].setLayoutY(-1000);
-							updatePoints(Integer.parseInt(wall2_values[i].getText()));
-							if(!has_shield) {
-								snake.setlen(-Integer.parseInt(wall2_values[i].getText()));
-							}
-							gamePane.getChildren().remove(wall2_display[i]);
-							gamePane.getChildren().remove(wall2_values[i]);
-							//System.out.println("hello");
-							
-							positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
-						}
+						gamePane.getChildren().remove(wall2_display[i]);
+						gamePane.getChildren().remove(wall2_values[i]);
+						//System.out.println("hello");
+						
+						positionBurst(snake_display.getLayoutX()-300, snake_display.getLayoutY()-400);
 					}
 					//setPosition(wall2_display[i]);
 				}
@@ -1203,7 +1301,9 @@ private void moveSnake() {
 				if((snake_edge + wall_edge) >= calcDist(snake_display.getLayoutX()+10, snake_display.getLayoutY()+10, wall1_display[i].getLayoutX()+75/2, wall1_display[i].getLayoutY()+75/2) ) {
 					if(wall1_display[i].isVisible() && gamePane.getChildren().contains(wall1_display[i])) {
 						wall1_display[i].setLayoutY(-1000);
-						updatePoints(Integer.parseInt(wall1_values[i].getText()));
+						
+						updatePoints(Math.min(Integer.parseInt(wall1_values[i].getText()),snake.getlen()+1));
+						
 						if(!has_shield) {
 							snake.setlen(-Integer.parseInt(wall1_values[i].getText()));
 						}
@@ -1347,6 +1447,55 @@ private void moveSnake() {
 		
 		burst.c7.setLayoutX(x);
 		burst.c7.setLayoutY(y);
+	}
+	
+	
+	public static void serialize_topplayer(TopPlayers root)throws IOException{
+		ObjectOutputStream out = null;
+        if (root==null){
+            root = new TopPlayers();
+        }
+        try {
+            out = new ObjectOutputStream(new FileOutputStream("database_topplayer.txt"));
+            out.writeObject(root);
+        }
+        finally {
+            out.close();
+        }
+    }
+    public static TopPlayers deserialize_topplayer() throws IOException,ClassNotFoundException{
+        ObjectInputStream in = null;
+        TopPlayers newroot = null;
+        try{
+            in = new ObjectInputStream(new FileInputStream("database_topplayer.txt"));
+            newroot = (TopPlayers) in.readObject();
+        }
+        finally {
+            in.close();
+            return newroot;
+        }
+    }
+	
+	private void checkEnd() throws IOException, ClassNotFoundException {
+		if(snake.getlen()<0) {
+			player.setScore(Integer.parseInt(points_label.getText()));
+			
+			DateTimeFormatter dtm = DateTimeFormatter.BASIC_ISO_DATE;
+			LocalDateTime ldt = LocalDateTime.now();
+			player.setDate(ldt);
+			topplayers.addplayer(player);
+			topplayers.setLastplayer(player);
+			
+			serialize_topplayer(topplayers);
+			TopPlayers op = deserialize_topplayer();
+			for(int i =0;i<op.getPlayers().size();i++) {
+				int a = op.getPlayers().get(i).getScore();
+				System.out.println(a + " " + op.getPlayers().get(i).getDate());
+			}
+			gameTimer.stop();
+			backButton.setVisible(true);
+			restartButton.setVisible(true);
+		}
 	}
 	
 }

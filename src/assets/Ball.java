@@ -10,6 +10,13 @@ public class Ball implements Serializable{
 	public boolean block_appear;
 	private double x;
 	private double y;
+	private int value;
+	public int getValue() {
+		return value;
+	}
+	public void setValue(int value) {
+		this.value = value;
+	}
 	public Ball() {
 		x=0;
 		y=0;

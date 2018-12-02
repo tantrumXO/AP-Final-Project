@@ -1,6 +1,11 @@
 package view;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import assets.SnakeButton;
+import assets.TopPlayers;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,7 +20,7 @@ public class LeaderBoard {
 	private AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
-	
+	private TopPlayers topplayers;
 	private static final int game_height = 800;
 	private static final int game_width = 600;
 	
@@ -30,6 +35,12 @@ public class LeaderBoard {
 	
 	public LeaderBoard() {
 		initializeStage();
+		try {
+			topplayers = deserialize_topplayer();
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void initializeStage() {
@@ -41,7 +52,18 @@ public class LeaderBoard {
 		gameStage.initStyle(StageStyle.UNDECORATED);
 		gameStage.setTitle("Snake VS Blocks");
 	}
-	
+	public static TopPlayers deserialize_topplayer() throws IOException,ClassNotFoundException{
+        ObjectInputStream in = null;
+        TopPlayers newroot = null;
+        try{
+            in = new ObjectInputStream(new FileInputStream("database_topplayer.txt"));
+            newroot = (TopPlayers) in.readObject();
+        }
+        finally {
+            in.close();
+            return newroot;
+        }
+    }
 	private void createBackground() {
 		gridPane1 = new GridPane();
 		gridPane2 = new GridPane();

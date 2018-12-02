@@ -23,7 +23,7 @@ public class MenuView {
 	private static final int width = 600;
 	private AnchorPane mainPane;
 	private Scene mainScene;
-	private Stage mainStage;
+	public Stage mainStage;
 	
 	private final static int button_start_X = 200;
 	private final static int button_start_Y = 350;
@@ -64,7 +64,7 @@ public class MenuView {
 		playButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				GameView gameManager = new GameView();
+				GameView gameManager = new GameView(mainStage);
 				gameManager.createNewGame(mainStage);
 			}
 		});
@@ -76,7 +76,7 @@ public class MenuView {
 		playButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				GameView gameManager = new GameView();
+				GameView gameManager = new GameView(mainStage);
 				try {
 					gameManager.LoadSavedGame(mainStage);
 				} catch (ClassNotFoundException | IOException e) {

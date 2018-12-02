@@ -1,26 +1,32 @@
 package assets;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 public class Player implements Serializable{
 	
 	private static final long serialVersionUID = 12L;
 	private String Name;
 	private int Score;
-	private Date date;
+	private LocalDateTime date;
 	public Player() {
 		Name = "John";
 		Score =0;
-		date = getDate();
+		date = null;
 	}
 	
-	public Date getDate() {
+	
+	public LocalDateTime getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+
+
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
+
+
 	public String getName() {
 		return Name;
 	}
