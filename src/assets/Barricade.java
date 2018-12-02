@@ -42,7 +42,7 @@ public class Barricade implements Serializable  {
 			block_path = new String("resources/barricade3.png");	
 		}
 		else {
-			block_path = new String("resources/barricade2.png");	
+			block_path = new String("resources/barricade3.png");	
 		}
 				
 			int prob = generateRandom(1,100);
