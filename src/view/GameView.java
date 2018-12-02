@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import assets.Ball;
 import assets.Barricade;
 import assets.Burst_Anim;
 import assets.Coin;
 import assets.Destroy_Blocks;
+import assets.GameElements;
 import assets.Magnet;
 import assets.Player;
 import assets.Shield;
@@ -40,6 +40,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class GameView {
+	private GameElements gameelements;
 	private AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
@@ -99,7 +100,7 @@ public class GameView {
 	private Burst_Anim burst;
 	private Stage mainStage;
 	
-	public GameView(Stage mainStage) {
+	public GameView(Stage mainStage) throws ClassNotFoundException, IOException {
 		game_speed = 5;
 		this.mainStage = mainStage;
 		initializeStage();
@@ -147,7 +148,8 @@ public class GameView {
 		});
 	}
 	
-	public void initializeStage() {
+	public void initializeStage() throws ClassNotFoundException, IOException {
+		gameelements = new GameElements();
 		gamePane = new AnchorPane();
 		gameScene = new Scene(gamePane, game_width, game_height);
 		gameStage = new Stage();
@@ -223,9 +225,16 @@ public class GameView {
 		restartButton.setOnAction(new EventHandler<ActionEvent>( ) {
 			@Override
 			public void handle(ActionEvent event) {
-				GameView gameManager = new GameView(mainStage);
-				gameManager.createNewGame(mainStage);
-				gameStage.close();
+				GameView gameManager;
+				try {
+					gameManager = new GameView(mainStage);
+					gameManager.createNewGame(mainStage);
+					gameStage.close();
+				} catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		});
 		
@@ -306,6 +315,15 @@ public class GameView {
 		gameStage.show();
 	}
 	public void LoadSavedGame(Stage menuStage) throws ClassNotFoundException, IOException {
+		
+		GameElements ggg = deserialize_gameelements();
+		has_shield = ggg.isHas_shield();
+		has_magnet = ggg.isHas_magnet();
+		for(int i=0;i<8;i++) {
+			wall1_values[i].setText(Integer.toString(ggg.getWall1values()[i]));
+			wall2_values[i].setText(Integer.toString(ggg.getWall2values()[i]));
+		}
+		points = ggg.getPoints();
 		
 		coin = deserialize_coin();
 		coin_display.setLayoutX(coin.getx());
@@ -394,9 +412,16 @@ public class GameView {
 		restartButton.setOnAction(new EventHandler<ActionEvent>( ) {
 			@Override
 			public void handle(ActionEvent event) {
-				GameView gameManager = new GameView(mainStage);
-				gameManager.createNewGame(mainStage);
-				gameStage.close();
+				GameView gameManager;
+				try {
+					gameManager = new GameView(mainStage);
+					gameManager.createNewGame(mainStage);
+					gameStage.close();
+				} catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		});
 		
@@ -1449,7 +1474,6 @@ public class GameView {
 		burst.c7.setLayoutY(y);
 	}
 	
-	
 	public static void serialize_topplayer(TopPlayers root)throws IOException{
 		ObjectOutputStream out = null;
         if (root==null){
@@ -1475,9 +1499,38 @@ public class GameView {
             return newroot;
         }
     }
-	
+    public static void serialize_gameelements(GameElements root)throws IOException{
+		ObjectOutputStream out = null;
+        if (root==null){
+            root = new GameElements();
+        }
+        try {
+            out = new ObjectOutputStream(new FileOutputStream("database_gameelements.txt"));
+            out.writeObject(root);
+        }
+        finally {
+            out.close();
+        }
+    }
+    public static GameElements deserialize_gameelements() throws IOException,ClassNotFoundException{
+        ObjectInputStream in = null;
+        GameElements newroot = null;
+        try{
+            in = new ObjectInputStream(new FileInputStream("database_gameelements.txt"));
+            newroot = (GameElements) in.readObject();
+        }
+        finally {
+            in.close();
+            return newroot;
+        }
+    }
 	private void checkEnd() throws IOException, ClassNotFoundException {
 		if(snake.getlen()<0) {
+			gameelements = new GameElements(Integer.parseInt(snake_value.getText()), has_magnet ,has_shield,Integer.parseInt(points_label.getText()),wall1_values,wall2_values);
+			serialize_gameelements(gameelements);
+			GameElements gg = deserialize_gameelements();
+			System.out.println(gg);
+			System.out.println();
 			player.setScore(Integer.parseInt(points_label.getText()));
 			
 			DateTimeFormatter dtm = DateTimeFormatter.BASIC_ISO_DATE;

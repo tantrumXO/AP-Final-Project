@@ -92,8 +92,15 @@ public class MenuView {
 		playButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				GameView gameManager = new GameView(mainStage);
-				gameManager.createNewGame(mainStage);
+				GameView gameManager;
+				try {
+					gameManager = new GameView(mainStage);
+					gameManager.createNewGame(mainStage);
+
+				} catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 	}
@@ -104,8 +111,9 @@ public class MenuView {
 		playButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				GameView gameManager = new GameView(mainStage);
+				
 				try {
+					GameView gameManager = new GameView(mainStage);
 					gameManager.LoadSavedGame(mainStage);
 				} catch (ClassNotFoundException | IOException e) {
 					// TODO Auto-generated catch block
