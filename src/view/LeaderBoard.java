@@ -1,18 +1,23 @@
 package view;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
+import assets.Player;
 import assets.SnakeButton;
 import assets.TopPlayers;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -21,8 +26,12 @@ public class LeaderBoard {
 	private Scene gameScene;
 	private Stage gameStage;
 	private TopPlayers topplayers;
+	private Label[] times;
+	private Label[] scores;
 	private static final int game_height = 800;
 	private static final int game_width = 600;
+	private final String font_path = "src/resources/SIMPLIFICA_Typeface.ttf";
+	private final String font_style = "-fx-background-color: transparent; -fx-text-fill: white";
 	
 	private Stage menuStage;
 	private AnimationTimer gameTimer;
@@ -34,13 +43,13 @@ public class LeaderBoard {
 	private final static String grid_url = "resources/grid.png";
 	
 	public LeaderBoard() {
-		initializeStage();
 		try {
 			topplayers = deserialize_topplayer();
 		} catch (ClassNotFoundException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		initializeStage();
 	}
 	
 	public void initializeStage() {
@@ -51,6 +60,8 @@ public class LeaderBoard {
 		gameStage.setResizable(false);
 		gameStage.initStyle(StageStyle.UNDECORATED);
 		gameStage.setTitle("Snake VS Blocks");
+		times = new Label[10];
+		scores = new Label[10];
 	}
 	public static TopPlayers deserialize_topplayer() throws IOException,ClassNotFoundException{
         ObjectInputStream in = null;
@@ -83,6 +94,7 @@ public class LeaderBoard {
 			@Override
 			public void handle(ActionEvent event) {
 				menuStage.show();
+				gameTimer.stop();
 				gameStage.close();
 			}
 		});
@@ -117,10 +129,46 @@ public class LeaderBoard {
 			@Override
 			public void handle(long now) {
 				moveBackground();
+				displayScores();
 			}
 		};
 		
 		gameTimer.start();
+	}
+	 
+	private void displayScores() {
+		ArrayList<Player> top10 = topplayers.getPlayers();
+		System.out.println(top10.toString());
+		System.out.println(top10.size());
+		
+		for(int i=0; i<top10.size(); i++) {
+			times[i] = new Label();
+			scores[i] = new Label();
+			
+			times[i].setStyle(font_style);
+			try {
+				times[i].setFont(Font.loadFont(new FileInputStream(font_path), 23));
+			} catch (FileNotFoundException e) {
+				times[i].setFont(Font.font("Verdana", 23));
+			}
+			scores[i].setStyle(font_style);
+			try {
+				scores[i].setFont(Font.loadFont(new FileInputStream(font_path), 23));
+			} catch (FileNotFoundException e) {
+				scores[i].setFont(Font.font("Verdana", 23));
+			}
+			
+			times[i].setText(top10.get(i).getDate().toString().replace('T', '\t'));
+			scores[i].setText(Integer.toString(top10.get(i).getScore()));
+			
+			times[i].setLayoutX(50);
+			times[i].setLayoutY(310 + 47*i);
+			scores[i].setLayoutX(450);
+			scores[i].setLayoutY(310 + 47*i);
+			
+			gamePane.getChildren().add(times[i]);
+			gamePane.getChildren().add(scores[i]);
+		}
 	}
 	
 }

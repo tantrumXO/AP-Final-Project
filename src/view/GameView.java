@@ -709,7 +709,7 @@ public class GameView {
 	
 		
 		if(destroy_blocks_y >= 800) {
-			createdestroy_block(destroy_blocks, -50);
+			createdestroy_block(destroy_blocks, -2400);
 		}	
 	}
 	public static void serialize_destroy_blocks(Destroy_Blocks root)throws IOException{
